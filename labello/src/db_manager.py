@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import mapper, sessionmaker, declarative_base
 from sqlalchemy_utils import database_exists, create_database
+from sqlalchemy.sql.expression import func
 import models
 
 class db_manager:
@@ -40,5 +41,27 @@ class db_manager:
             dico.append(e.col_hex_value)
             lst.append(dico)
         return (lst)
+
+    def get_last_object(self):
+        last_obj_id = self.session.query(func.max(models.Object.obj_id)).one()
+        return last_obj_id[0]
+
+    def get_object_by_id(self, obj_id):
+        obj = self.session.query(models.Object).where(models.Object.obj_id == obj_id).one()
+        return obj.as_dict()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

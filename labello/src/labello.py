@@ -22,8 +22,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, Gdk
 import os, sys
+from Scan_object import *
 
-from db_manager import *
 
 
 # Comment the first line and uncomment the second before installing
@@ -32,33 +32,42 @@ UI_FILE = "ui/labello.ui"
 
 class GUI:
     def __init__(self):
-        self.db_manager = db_manager()
+        self.scan_object = Scan_object()
         self.builder = Gtk.Builder()
         self.builder.add_from_file(UI_FILE)
         self.builder.connect_signals(self)
 
-        self.init_componont()
-
+        self.init_components()
 
         self.window = self.builder.get_object('Labello')
         self.window.show_all()
 
 
-    def init_componont(self):
+    def init_components(self):
         self.refresh_cmbx_cat_list(None)
 
     def on_window_destroy(self, window):
         Gtk.main_quit()
 
-    def refresh_cmbx_cat_list(self, comb):
-        print("ok")
-        lst = self.db_manager.get_colors()
-        cmbx_cat_list = self.builder.get_object('cmbx_cat_list')
+    def on_add_categorie(self,widget):
+        dialog = self.builder.get_object('cetegorie_dialog_box')
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            print("OK")
+        elif response == Gtk.ResponseType.CANCEL:
+            print("CANCEL")
+        dialog.destroy()
 
+    def refresh_cmbx_cat_list(self, comb):
+
+        lst = self.scan_object.get_list_color()
+
+        cmbx_cat_list = self.builder.get_object('cmbx_cat_list')
+        cmbx_cat_list.clear()
         # the liststore
         liststore = Gtk.ListStore(str, str)
+
         for elem in lst:
-            print(elem)
             liststore.append(elem)
         cmbx_cat_list.set_model(liststore)
 

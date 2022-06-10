@@ -12,6 +12,9 @@ class Categorie(Base):
     cat_name = Column(String(255), primary_key=True)
     cat_description = Column(String(255))
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class SubCategorie(Base):
     __tablename__ = 'subcategorie'
@@ -19,6 +22,9 @@ class SubCategorie(Base):
     scat_description = Column(String(255))
     scat_cat_name = Column(String(255), ForeignKey("categorie.cat_name"))
     relationship("categorie")
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class ObjectName(Base):
@@ -28,11 +34,17 @@ class ObjectName(Base):
     obn_scat_name = Column(String(255), ForeignKey("subcategorie.scat_name"))
     relationship("subcategorie")
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Shape(Base):
     __tablename__ = 'shape'
     shp_name = Column(String(255), primary_key=True)
     shp_description = Column(String(255))
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Color(Base):
@@ -40,15 +52,49 @@ class Color(Base):
     col_name = Column(String(255), primary_key=True)
     col_hex_value = Column(String(255))
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 class Material(Base):
     __tablename__ = 'material'
     mat_name = Column(String(255), primary_key=True)
     mat_description = Column(String(255))
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 class Mouvable(Base):
     __tablename__ = 'mouvable'
     mov_name = Column(String(255), primary_key=True)
     mov_description = Column(String(255))
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class Shine(Base):
+    __tablename__ = 'shine'
+    shn_name = Column(String(255), primary_key=True)
+    shn_description = Column(String(255))
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class Roughness(Base):
+    __tablename__ = 'roughness'
+    rug_name = Column(String(255), primary_key=True)
+    rug_description = Column(String(255))
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class Filling(Base):
+    __tablename__ = 'filling'
+    fil_name = Column(String(255), primary_key=True)
+    fil_description = Column(String(255))
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 
 
@@ -61,9 +107,17 @@ class Object(Base):
     obj_size_length_x = Column(Integer())
     obj_size_width_y = Column(Integer())
     obj_size_height_z = Column(Integer())
-    obj_shine = Column(Integer())
+
+    obj_shine = Column(String(255), ForeignKey("shine.shn_name"))
+    relationship("shine")
+
+    obj_filling = Column(String(255), ForeignKey("filling.fil_name"))
+    relationship("filling")
+
+    obj_roughness = Column(String(255), ForeignKey("roughness.rug_name"))
+    relationship("roughness")
+
     obj_weight = Column(Integer())
-    obj_filling = Column(Integer())
 
     obj_obn_name = Column(String(255), ForeignKey("object_name.obn_name"))
     relationship("object_name")
@@ -84,6 +138,8 @@ class Object(Base):
     obj_mov_name = Column(String(255), ForeignKey("mouvable.mov_name"))
     relationship("mouvable")
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Image(Base):
@@ -111,10 +167,11 @@ class Image(Base):
     img_pc_distance = Column(Integer())
     img_specto_data = Column(Text())
     img_specto_position = Column(Integer())
-
-
     img_obj_id = Column(Integer(), ForeignKey("object.obj_id"))
     relationship("object")
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 class Characteristic(Base):
     __tablename__ = 'characteristic'
@@ -125,6 +182,9 @@ class Characteristic(Base):
     car_type_value = Column(String(255))
     car_list_values = Column(String(255))
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 class ObjectCharacteristic(Base):
     __tablename__ = 'object_characteristic'
     ocar_obj_id = Column(Integer(), ForeignKey("object.obj_id"), primary_key=True)
@@ -132,4 +192,7 @@ class ObjectCharacteristic(Base):
     ocar_obj_value = Column(String(255))
     relationship("object")
     relationship("characteristic")
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
