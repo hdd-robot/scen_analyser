@@ -51,6 +51,7 @@ class GUI:
         self.refresh_cmbx_subcat_list(None)
         self.refresh_cmbx_object_name_list(None)
         self.upload_all_fildes()
+        self.refresh_list_objects(None)
     def on_window_destroy(self, window):
         Gtk.main_quit()
 
@@ -93,7 +94,30 @@ class GUI:
         cmbx.add_attribute(cell, 'text', 0)
         cmbx.set_active(0)
         cmbx.set_entry_text_column(1)
-        pass
+
+    def refresh_list_objects(self, comb):
+        lst = [["abc","def"],["ghi","klm"],["abc","def"],["ghi","klm"],["abc","def"],["ghi","klm"],["abc","def"],["ghi","klm"]]
+        #lst = self.scan_object.get_object_list()
+        tv_obj_lst = self.builder.get_object('treeview_object_list')
+
+        tv_column1 = Gtk.TreeViewColumn('ID', Gtk.CellRendererText(), text=0)
+        tv_column2 = Gtk.TreeViewColumn('Obj Name', Gtk.CellRendererText(), text=1)
+
+        tv_obj_lst.append_column(tv_column1)
+        tv_obj_lst.append_column(tv_column2)
+
+
+        list_store = Gtk.ListStore(str, str)
+        for elem in lst:
+            list_store.append(elem)
+
+        tv_obj_lst.set_model(list_store)
+
+
+
+        cell = Gtk.CellRendererText()
+
+        tv_obj_lst.show()
 
     def refresh_cmbx_object_name_list(self, comb):
         lst = []
@@ -157,7 +181,6 @@ class GUI:
         cmbx.pack_start(cell, True)
         cmbx.add_attribute(cell, 'text', 0)
         lst2 = [x[0] for x in lst]
-        print(lst2)
         cmbx.set_active(lst2.index(self.selected_object_prop[props]))
         cmbx.set_entry_text_column(1)
 

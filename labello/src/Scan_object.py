@@ -31,7 +31,7 @@ class Scan_object:
 
     def get_object_list(self):
         """ get list of all objects"""
-        pass
+        return []
 
     def add_color(self, properties):
         """ add color """
