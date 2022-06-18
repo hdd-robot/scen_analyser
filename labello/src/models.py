@@ -95,18 +95,25 @@ class Filling(Base):
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+class Flexible(Base):
+    __tablename__ = 'flexible'
+    flx_name = Column(String(255), primary_key=True)
+    flx_description = Column(String(255))
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 
 class Object(Base):
     __tablename__ = 'object'
     obj_id = Column(Integer(), primary_key=True)
-    obj_real_name = Column(String(255))
-    obj_real_description = Column(String(255))
-    obj_date_create= Column(DateTime(), default=datetime.datetime.utcnow())
-    obj_size_length_x = Column(Integer())
-    obj_size_width_y = Column(Integer())
-    obj_size_height_z = Column(Integer())
+    obj_real_name = Column(String(255), default='')
+    obj_real_description = Column(String(255), default='')
+    obj_date_create= Column(DateTime(), default = datetime.datetime.utcnow())
+    obj_size_length_x = Column(Integer(), default = 0)
+    obj_size_width_y = Column(Integer(), default = 0)
+    obj_size_height_z = Column(Integer(), default = 0)
 
     obj_shine = Column(String(255), ForeignKey("shine.shn_name"))
     relationship("shine")
@@ -137,6 +144,9 @@ class Object(Base):
 
     obj_mov_name = Column(String(255), ForeignKey("mouvable.mov_name"))
     relationship("mouvable")
+
+    obj_flx_name = Column(String(255), ForeignKey("flexible.flx_name"))
+    relationship("flexible")
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

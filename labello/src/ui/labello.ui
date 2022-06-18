@@ -273,7 +273,7 @@ Author: Halim Djerroud
               </packing>
             </child>
             <child>
-              <!-- n-columns=2 n-rows=15 -->
+              <!-- n-columns=2 n-rows=16 -->
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -457,7 +457,7 @@ Author: Halim Djerroud
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="obj_mat_3">
+                  <object class="GtkComboBox" id="cmbx_obj_mat_3">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">3</property>
@@ -472,7 +472,7 @@ Author: Halim Djerroud
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="obj_mat_2">
+                  <object class="GtkComboBox" id="cmbx_obj_mat_2">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">3</property>
@@ -487,7 +487,7 @@ Author: Halim Djerroud
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="obj_mat_1">
+                  <object class="GtkComboBox" id="cmbx_obj_mat_1">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">3</property>
@@ -502,7 +502,7 @@ Author: Halim Djerroud
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="obj_color_3">
+                  <object class="GtkComboBox" id="cmbx_obj_color_3">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">3</property>
@@ -517,7 +517,7 @@ Author: Halim Djerroud
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="obj_color_1">
+                  <object class="GtkComboBox" id="cmbx_obj_color_1">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">3</property>
@@ -532,7 +532,7 @@ Author: Halim Djerroud
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="obj_color_2">
+                  <object class="GtkComboBox" id="cmbx_obj_color_2">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">3</property>
@@ -547,7 +547,7 @@ Author: Halim Djerroud
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="obj_moveable">
+                  <object class="GtkComboBox" id="cmbx_obj_moveable">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">3</property>
@@ -562,7 +562,7 @@ Author: Halim Djerroud
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="obj_filling">
+                  <object class="GtkComboBox" id="cmbx_obj_filling">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">3</property>
@@ -574,21 +574,6 @@ Author: Halim Djerroud
                   <packing>
                     <property name="left-attach">1</property>
                     <property name="top-attach">7</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="obj_shine">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="margin-start">3</property>
-                    <property name="margin-end">3</property>
-                    <property name="margin-top">2</property>
-                    <property name="margin-bottom">2</property>
-                    <property name="hexpand">True</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">6</property>
                   </packing>
                 </child>
                 <child>
@@ -660,6 +645,7 @@ Author: Halim Djerroud
                     <property name="margin-top">2</property>
                     <property name="margin-bottom">2</property>
                     <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -679,6 +665,51 @@ Author: Halim Djerroud
                   <packing>
                     <property name="left-attach">1</property>
                     <property name="top-attach">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="cmbx_obj_shine">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-left">3</property>
+                    <property name="margin-right">3</property>
+                    <property name="margin-start">3</property>
+                    <property name="margin-end">3</property>
+                    <property name="margin-top">2</property>
+                    <property name="margin-bottom">2</property>
+                    <property name="hexpand">True</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Flexible</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">15</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="cmbx_obj_flx">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-left">3</property>
+                    <property name="margin-right">3</property>
+                    <property name="margin-start">3</property>
+                    <property name="margin-end">3</property>
+                    <property name="margin-top">2</property>
+                    <property name="margin-bottom">2</property>
+                    <property name="hexpand">True</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">15</property>
                   </packing>
                 </child>
               </object>

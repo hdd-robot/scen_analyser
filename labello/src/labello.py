@@ -32,20 +32,25 @@ UI_FILE = "ui/labello.ui"
 
 class GUI:
     def __init__(self):
+
         self.scan_object = Scan_object()
+        self.scan_object.init_to_last_object()
+        self.selected_object_prop = self.scan_object.get_current_object_prop()
+
+
         self.builder = Gtk.Builder()
         self.builder.add_from_file(UI_FILE)
         self.builder.connect_signals(self)
-
         self.init_components()
-
         self.window = self.builder.get_object('Labello')
         self.window.show_all()
 
 
     def init_components(self):
         self.refresh_cmbx_cat_list(None)
-
+        self.refresh_cmbx_subcat_list(None)
+        self.refresh_cmbx_object_name_list(None)
+        self.upload_all_fildes()
     def on_window_destroy(self, window):
         Gtk.main_quit()
 
@@ -59,24 +64,102 @@ class GUI:
         dialog.destroy()
 
     def refresh_cmbx_cat_list(self, comb):
-
-        lst = self.scan_object.get_list_color()
-
-        cmbx_cat_list = self.builder.get_object('cmbx_cat_list')
-        cmbx_cat_list.clear()
+        lst = self.scan_object.get_list_categories()
+        cmbx = self.builder.get_object('cmbx_cat_list')
+        cmbx.clear()
         # the liststore
         liststore = Gtk.ListStore(str, str)
-
         for elem in lst:
             liststore.append(elem)
-        cmbx_cat_list.set_model(liststore)
-
+        cmbx.set_model(liststore)
         cell = Gtk.CellRendererText()
-        cmbx_cat_list.pack_start(cell, True)
-        cmbx_cat_list.add_attribute(cell, 'text', 0)
-        cmbx_cat_list.set_active(0)
-        cmbx_cat_list.set_entry_text_column(1)
+        cmbx.pack_start(cell, True)
+        cmbx.add_attribute(cell, 'text', 0)
+        cmbx.set_active(0)
+        cmbx.set_entry_text_column(1)
 
+    def refresh_cmbx_subcat_list(self, comb):
+        lst = []
+        if self.selected_object_prop is not None:
+            lst = self.scan_object.get_list_subcategories(self.selected_object_prop["cat_name"])
+        cmbx = self.builder.get_object('cmbx_subcat_list')
+        cmbx.clear()
+        liststore = Gtk.ListStore(str, str)
+        for elem in lst:
+            liststore.append(elem)
+        cmbx.set_model(liststore)
+        cell = Gtk.CellRendererText()
+        cmbx.pack_start(cell, True)
+        cmbx.add_attribute(cell, 'text', 0)
+        cmbx.set_active(0)
+        cmbx.set_entry_text_column(1)
+        pass
+
+    def refresh_cmbx_object_name_list(self, comb):
+        lst = []
+        if self.selected_object_prop is not None:
+            lst = self.scan_object.get_list_object_name(self.selected_object_prop["scat_name"])
+        cmbx = self.builder.get_object('cmbx_obj_name_list')
+        cmbx.clear()
+        liststore = Gtk.ListStore(str, str)
+        for elem in lst:
+            liststore.append(elem)
+        cmbx.set_model(liststore)
+        cell = Gtk.CellRendererText()
+        cmbx.pack_start(cell, True)
+        cmbx.add_attribute(cell, 'text', 0)
+        cmbx.set_active(0)
+        cmbx.set_entry_text_column(1)
+        pass
+
+    def upload_all_fildes(self):
+        #RealName
+        obj_real_name = self.builder.get_object('obj_real_name')
+        obj_real_name.set_text(self.selected_object_prop["obj_real_name"])
+        # Description
+        obj_description = self.builder.get_object('obj_description')
+        obj_description.set_text(self.selected_object_prop["obj_real_description"])
+        # size x
+        obj_size_x = self.builder.get_object('obj_size_x')
+        obj_size_x.set_text(str(self.selected_object_prop["obj_size_length_x"]))
+        # size y
+        obj_size_y = self.builder.get_object('obj_size_y')
+        obj_size_y.set_text(str(self.selected_object_prop["obj_size_width_y"]))
+        # size z
+        obj_size_z = self.builder.get_object('obj_size_z')
+        obj_size_z.set_text(str(self.selected_object_prop["obj_size_height_z"]))
+        # obj_weight
+        obj_weight = self.builder.get_object('obj_weight')
+        obj_weight.set_text(str(self.selected_object_prop["obj_weight"]))
+
+        # load combobox
+        self.load_cmbx('cmbx_obj_shine', self.scan_object.get_list_shine(), 'obj_shine')
+        self.load_cmbx('cmbx_obj_filling', self.scan_object.get_list_filling(), 'obj_filling')
+        self.load_cmbx('cmbx_obj_moveable', self.scan_object.get_list_movable(), 'obj_mov_name')
+        self.load_cmbx('cmbx_obj_color_1', self.scan_object.get_list_color(), 'obj_color_name_1')
+        self.load_cmbx('cmbx_obj_color_2', self.scan_object.get_list_color(), 'obj_color_name_2')
+        self.load_cmbx('cmbx_obj_color_3', self.scan_object.get_list_color(), 'obj_color_name_3')
+        self.load_cmbx('cmbx_obj_mat_1', self.scan_object.get_list_material(), 'obj_mat_name_1')
+        self.load_cmbx('cmbx_obj_mat_2', self.scan_object.get_list_material(), 'obj_mat_name_2')
+        self.load_cmbx('cmbx_obj_mat_3', self.scan_object.get_list_material(), 'obj_mat_name_3')
+        self.load_cmbx('cmbx_obj_flx', self.scan_object.get_list_flexible(), 'obj_flx_name')
+
+
+
+    def load_cmbx(self, cmbx_name, lst, props):
+        cmbx = self.builder.get_object(cmbx_name)
+        cmbx.clear()
+        liststore = Gtk.ListStore(str, str)
+        for elem in lst:
+            liststore.append(elem)
+        cmbx.set_model(liststore)
+        cell = Gtk.CellRendererText()
+        cmbx.pack_start(cell, True)
+        cmbx.add_attribute(cell, 'text', 0)
+        lst2 = [x[0] for x in lst]
+        print(lst2)
+        cmbx.set_active(lst2.index(self.selected_object_prop[props]))
+        cmbx.set_entry_text_column(1)
 
 def main():
     app = GUI()

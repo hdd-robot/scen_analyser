@@ -2,7 +2,10 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import mapper, sessionmaker, declarative_base
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.sql.expression import func
+from sqlalchemy.orm.exc import NoResultFound
+
 import models
+
 
 class db_manager:
     def __init__(self):
@@ -14,54 +17,274 @@ class db_manager:
         session.configure(bind=self.engine)
         self.session = session()
 
-
-
     def create_tables(self):
         """ Create tables in database """
         models.Base.metadata.create_all(self.engine)
 
-    def add_color(self, color, hex=""):
+    ############# COLOR #################################
+    def add_new_color(self, col_name, col_hex_value=""):
+        """ ADD COLOR """
         color_obj = models.Color()
-        color_obj.col_name = color
-        color_obj.col_hex_value = hex
+        color_obj.col_name = col_name
+        color_obj.col_hex_value = col_hex_value
         self.session.add(color_obj)
         self.session.commit()
 
-    def get_colors(self):
+    def get_list_colors(self):
+        """ UPDATE COLOR """
         color_res = self.session.query(models.Color).all()
         lst = []
         for e in color_res:
-            # dico = {}
-            # dico["col_name"] = e.col_name;
-            # dico["col_hex_value"] = e.col_hex_value;
-            # lst.append(dico)
-
-            dico = []
+            dico = list()
             dico.append(e.col_name)
             dico.append(e.col_hex_value)
             lst.append(dico)
-        return (lst)
+        return lst
 
+
+
+    ############# CATEGORIE #################################
+    def add_new_categorie(self, cat_name, cat_description=''):
+        """ ADD CATEGORIE """
+        categorie_obj = models.Categorie()
+        categorie_obj.cat_name = cat_name
+        categorie_obj.cat_description = cat_description
+        self.session.add(categorie_obj)
+        self.session.commit()
+
+    def get_list_categories(self):
+        """ UPDATE COLOR """
+        categories_res = self.session.query(models.Categorie).all()
+        lst = []
+        for e in categories_res:
+            dico = list()
+            dico.append(e.cat_name)
+            dico.append(e.cat_description)
+            lst.append(dico)
+        return lst
+
+    ############# SUBCATEGORIE #################################
+    def add_new_subcategorie(self, scat_name, scat_cat_name, scat_description=''):
+        """ ADD SUBCATEGORIE """
+        subCategorie_obj = models.SubCategorie()
+        subCategorie_obj.scat_name = scat_name
+        subCategorie_obj.scat_cat_name = scat_cat_name
+        subCategorie_obj.scat_description = scat_description
+        self.session.add(subCategorie_obj)
+        self.session.commit()
+
+    def get_list_subcategories(self, p_scat_cat_name):
+        """ UPDATE COLOR """
+        subCategories_res = self.session.query(models.SubCategorie).filter(
+            models.SubCategorie.scat_cat_name == p_scat_cat_name).all()
+        lst = []
+        for e in subCategories_res:
+            dico = list()
+            dico.append(e.scat_name)
+            dico.append(e.scat_description)
+            lst.append(dico)
+        return lst
+
+    ############# FILLING #################################
+    def add_new_filing(self, fil_name, fil_description=''):
+        """ ADD FILLING """
+        filling_obj = models.Filling()
+        filling_obj.fil_name = fil_name
+        filling_obj.fil_description = fil_description
+        self.session.add(filling_obj)
+        self.session.commit()
+
+    def get_list_fillings(self):
+        """ UPDATE FILLING """
+        filling_res = self.session.query(models.Filling).all()
+        lst = []
+        for e in filling_res:
+            dico = list()
+            dico.append(e.fil_name)
+            dico.append(e.fil_description)
+            lst.append(dico)
+        return lst
+
+    ############# MATERIAL #################################
+    def add_new_material(self, mat_name, mat_description=''):
+        """ ADD MATERIAL """
+        material_obj = models.Material()
+        material_obj.mat_name = mat_name
+        material_obj.mat_description = mat_description
+        self.session.add(material_obj)
+        self.session.commit()
+
+    def get_list_material(self):
+        """ UPDATE MATERIAL """
+        material_res = self.session.query(models.Material).all()
+        lst = []
+        for e in material_res:
+            dico = list()
+            dico.append(e.mat_name)
+            dico.append(e.mat_description)
+            lst.append(dico)
+        return lst
+
+    ############# MOUVABLE #################################
+    def add_new_movable(self, mov_name, mov_description=''):
+        """ ADD MOVABLE """
+        movable_obj = models.Mouvable()
+        movable_obj.mov_name = mov_name
+        movable_obj.mov_description = mov_description
+        self.session.add(movable_obj)
+        self.session.commit()
+
+    def get_list_movable(self):
+        """ UPDATE MOVABLE """
+        movable_res = self.session.query(models.Mouvable).all()
+        lst = []
+        for e in movable_res:
+            dico = list()
+            dico.append(e.mov_name)
+            dico.append(e.mov_description)
+            lst.append(dico)
+        return lst
+
+    ############# ROUGHNESS #################################
+    def add_new_roughness(self, rug_name, rug_description=''):
+        """ ADD ROUGHNESS """
+        roughness_obj = models.Roughness()
+        roughness_obj.rug_name = rug_name
+        roughness_obj.rug_description = rug_description
+        self.session.add(roughness_obj)
+        self.session.commit()
+
+    def get_list_roughness(self):
+        """ UPDATE ROUGHNESS """
+        roughness_res = self.session.query(models.Roughness).all()
+        lst = []
+        for e in roughness_res:
+            dico = list()
+            dico.append(e.rug_name)
+            dico.append(e.rug_description)
+            lst.append(dico)
+        return lst
+
+    ############# SHAPE #################################
+    def add_new_shape(self, shp_name, shp_description=''):
+        """ ADD ROUGHNESS """
+        shape_obj = models.Shape()
+        shape_obj.shp_name = shp_name
+        shape_obj.shp_description = shp_description
+        self.session.add(shape_obj)
+        self.session.commit()
+
+    def get_list_shape(self):
+        """ UPDATE ROUGHNESS """
+        shape_res = self.session.query(models.Shape).all()
+        lst = []
+        for e in shape_res:
+            dico = list()
+            dico.append(e.shp_name)
+            dico.append(e.shp_description)
+            lst.append(dico)
+        return lst
+
+    ############# SHINE #################################
+    def add_new_shine(self, shn_name, shn_description=''):
+        """ ADD SHINE """
+        shane_obj = models.Shine()
+        shane_obj.shn_name = shn_name
+        shane_obj.shn_description = shn_description
+        self.session.add(shane_obj)
+        self.session.commit()
+
+    def get_list_shine(self):
+        """ UPDATE SHINE """
+        shane_res = self.session.query(models.Shine).all()
+        lst = []
+        for e in shane_res:
+            dico = list()
+            dico.append(e.shn_name)
+            dico.append(e.shn_description)
+            lst.append(dico)
+        return lst
+
+    ############# Flexible #################################
+    def add_new_flexible(self, flx_name, flx_description=''):
+        """ ADD Flexible """
+        flexible_obj = models.Material()
+        flexible_obj.flx_name = flx_name
+        flexible_obj.flx_description = flx_description
+        self.session.add(flexible_obj)
+        self.session.commit()
+
+    def get_list_flexible(self):
+        """ UPDATE Flexible """
+        flexeble_res = self.session.query(models.Flexible).all()
+        lst = []
+        for e in flexeble_res:
+            dico = list()
+            dico.append(e.flx_name)
+            dico.append(e.flx_description)
+            lst.append(dico)
+        return lst
+
+    ############# OBJECT_NAME #################################
+    def add_new_objectName(self, obn_name, obn_scat_name, obn_description=''):
+        """ ADD OBJECT_NAME """
+        objectName_obj = models.ObjectName()
+        objectName_obj.obn_name = obn_name
+        objectName_obj.obn_scat_name = obn_scat_name
+        objectName_obj.obn_description = obn_description
+        self.session.add(objectName_obj)
+        self.session.commit()
+
+    def get_list_objectName(self, p_obn_scat_name):
+        """ OBJECT_NAME """
+        objectName_res = self.session.query(models.ObjectName).filter(
+            models.ObjectName.obn_scat_name == p_obn_scat_name).all()
+        lst = []
+        for e in objectName_res:
+            dico = list()
+            dico.append(e.obn_name)
+            dico.append(e.obn_description)
+            lst.append(dico)
+        return lst
+
+    ############# OBJECTS #####################################
     def get_last_object(self):
+        """
+        get id of latest object saved in database
+        """
         last_obj_id = self.session.query(func.max(models.Object.obj_id)).one()
         return last_obj_id[0]
 
     def get_object_by_id(self, obj_id):
-        obj = self.session.query(models.Object).where(models.Object.obj_id == obj_id).one()
-        return obj.as_dict()
+        """
+        SELECT * FROM object, object_name, subcategorie, categorie
+        WHERE
+        object.obj_obn_name = object_name.obn_name AND
+        object_name.obn_scat_name = subcategorie.scat_name AND
+        subcategorie.scat_cat_name = categorie.cat_name
+        """
+        obj = self.session.query(models.Object, models.ObjectName, models.SubCategorie, models.Categorie
+                                 ).filter(
+            models.Object.obj_obn_name == models.ObjectName.obn_name
+        ).filter(
+            models.ObjectName.obn_scat_name == models.SubCategorie.scat_name
+        ).filter(
+            models.SubCategorie.scat_cat_name == models.Categorie.cat_name
+        ).filter(models.Object.obj_id == obj_id).one()
+        res = {}
+        for o in obj:
+            res = res | o.as_dict()
+        return res
 
+    def get_list_all_object(self):
+        res = self.session.query(models.Object).all()
+        lst = list()
+        for e in res:
+            lst.append(e.as_dict())
+        return lst
 
+    def add_new_object(self, properties):
+        pass
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def update_object(self, properties):
+        pass
