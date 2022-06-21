@@ -283,6 +283,27 @@ class db_manager:
             lst.append(e.as_dict())
         return lst
 
+
+    def get_next_object(self, id):
+        """
+        get id of next object saved in database
+        """
+        try:
+            last_obj_id = self.session.query(models.Object.obj_id).filter( models.Object.obj_id > id).order_by(models.Object.obj_id.asc()).limit(1).one()
+        except Exception as e:
+            return None
+        return last_obj_id[0]
+
+    def get_previous_object(self, id):
+        """
+        get id of previous object saved in database
+        """
+        try:
+            last_obj_id = self.session.query(models.Object.obj_id).filter( models.Object.obj_id < id).order_by(models.Object.obj_id.desc()).limit(1).one()
+        except Exception as e:
+            return None
+        return last_obj_id[0]
+
     def add_new_object(self, properties):
         pass
 

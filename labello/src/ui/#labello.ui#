@@ -401,7 +401,7 @@ Author: Halim Djerroud
                     <property name="label" translatable="yes">last_row</property>
                     <property name="use-underline">True</property>
                     <property name="icon-name">go-last</property>
-                    <signal name="clicked" handler="go_to_last_object" swapped="no"/>
+                    <signal name="clicked" handler="go_to_lastest_object" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>

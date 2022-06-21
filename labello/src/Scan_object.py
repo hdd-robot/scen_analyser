@@ -18,20 +18,22 @@ class Scan_object:
 
 
     def next_object(self):
-        """ move to the next object  """
-        pass
+        return self.db_manager.get_next_object()
 
     def previous_object(self):
         """ move to the previous object  """
-        pass
+        return self.db_manager.get_previous_object()
 
     def move_to_object(self, obj_id):
-        """ move to the previous object  """
+        """ move to the  object by id  """
         pass
 
     def get_object_list(self):
         """ get list of all objects"""
-        return []
+        lst = []
+        for elem in self.db_manager.get_list_all_object():
+            lst.append(list(elem.values()))
+        return lst
 
     def add_color(self, properties):
         """ add color """

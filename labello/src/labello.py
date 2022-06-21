@@ -37,23 +37,42 @@ class GUI:
         self.scan_object.init_to_last_object()
         self.selected_object_prop = self.scan_object.get_current_object_prop()
 
+        screen = Gdk.Screen.get_default()
+        provider = Gtk.CssProvider()
+        style_context = Gtk.StyleContext()
+        style_context.add_provider_for_screen(
+            screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+        css = b"""
+                     entry {
+                            min-height: 22px;
+                     }
+                     button.combo {
+                            min-height: 0px;
+                            margin: 0px;
+                            padding: 0px;
+                                                           
+                     }
+                """
+        provider.load_from_data(css)
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(UI_FILE)
         self.builder.connect_signals(self)
-        self.init_components()
+        self.refresh_all_components()
         self.window = self.builder.get_object('Labello')
         self.window.show_all()
 
-
-    def init_components(self):
-        self.refresh_cmbx_cat_list(None)
-        self.refresh_cmbx_subcat_list(None)
-        self.refresh_cmbx_object_name_list(None)
-        self.upload_all_fildes()
-        self.refresh_list_objects(None)
     def on_window_destroy(self, window):
         Gtk.main_quit()
+
+    def refresh_all_components(self):
+        self.refresh_cmbx_cat_list()
+        self.refresh_cmbx_subcat_list()
+        self.refresh_cmbx_object_name_list()
+        self.upload_all_fildes()
+        self.refresh_list_objects()
+
 
     def on_add_categorie(self,widget):
         dialog = self.builder.get_object('cetegorie_dialog_box')
@@ -64,77 +83,82 @@ class GUI:
             print("CANCEL")
         dialog.destroy()
 
-    def refresh_cmbx_cat_list(self, comb):
+    def refresh_cmbx_cat_list(self):
         lst = self.scan_object.get_list_categories()
         cmbx = self.builder.get_object('cmbx_cat_list')
         cmbx.clear()
         # the liststore
         liststore = Gtk.ListStore(str, str)
+        lst_cat=[]
         for elem in lst:
             liststore.append(elem)
+            lst_cat.append(elem[0])
         cmbx.set_model(liststore)
         cell = Gtk.CellRendererText()
         cmbx.pack_start(cell, True)
         cmbx.add_attribute(cell, 'text', 0)
-        cmbx.set_active(0)
+        cmbx.set_active(lst_cat.index(self.selected_object_prop['scat_cat_name']))
+
+
         cmbx.set_entry_text_column(1)
 
-    def refresh_cmbx_subcat_list(self, comb):
+    def refresh_cmbx_subcat_list(self):
         lst = []
         if self.selected_object_prop is not None:
             lst = self.scan_object.get_list_subcategories(self.selected_object_prop["cat_name"])
         cmbx = self.builder.get_object('cmbx_subcat_list')
         cmbx.clear()
         liststore = Gtk.ListStore(str, str)
+        lst_scat = []
         for elem in lst:
             liststore.append(elem)
+            lst_scat.append(elem[0])
         cmbx.set_model(liststore)
         cell = Gtk.CellRendererText()
         cmbx.pack_start(cell, True)
         cmbx.add_attribute(cell, 'text', 0)
-        cmbx.set_active(0)
+        cmbx.set_active(lst_scat.index(self.selected_object_prop['scat_name']))
         cmbx.set_entry_text_column(1)
 
-    def refresh_list_objects(self, comb):
-        lst = [["abc","def"],["ghi","klm"],["abc","def"],["ghi","klm"],["abc","def"],["ghi","klm"],["abc","def"],["ghi","klm"]]
-        #lst = self.scan_object.get_object_list()
-        tv_obj_lst = self.builder.get_object('treeview_object_list')
-
-        tv_column1 = Gtk.TreeViewColumn('ID', Gtk.CellRendererText(), text=0)
-        tv_column2 = Gtk.TreeViewColumn('Obj Name', Gtk.CellRendererText(), text=1)
-
-        tv_obj_lst.append_column(tv_column1)
-        tv_obj_lst.append_column(tv_column2)
-
-
-        list_store = Gtk.ListStore(str, str)
-        for elem in lst:
-            list_store.append(elem)
-
-        tv_obj_lst.set_model(list_store)
-
-
-
-        cell = Gtk.CellRendererText()
-
-        tv_obj_lst.show()
-
-    def refresh_cmbx_object_name_list(self, comb):
+    def refresh_cmbx_object_name_list(self):
         lst = []
         if self.selected_object_prop is not None:
             lst = self.scan_object.get_list_object_name(self.selected_object_prop["scat_name"])
         cmbx = self.builder.get_object('cmbx_obj_name_list')
         cmbx.clear()
         liststore = Gtk.ListStore(str, str)
+        lst_obname = []
         for elem in lst:
             liststore.append(elem)
+            lst_obname.append(elem[0])
         cmbx.set_model(liststore)
         cell = Gtk.CellRendererText()
         cmbx.pack_start(cell, True)
         cmbx.add_attribute(cell, 'text', 0)
-        cmbx.set_active(0)
-        cmbx.set_entry_text_column(1)
-        pass
+        cmbx.set_active(lst_obname.index(self.selected_object_prop['obn_name']))
+
+
+    def refresh_list_objects(self):
+        lst = self.scan_object.get_object_list()
+        tv_obj_lst = self.builder.get_object('treeview_object_list')
+        tv_column1 = Gtk.TreeViewColumn('ID', Gtk.CellRendererText(), text=0)
+        tv_column2 = Gtk.TreeViewColumn('Obj Name', Gtk.CellRendererText(), text=1)
+        tv_obj_lst.append_column(tv_column1)
+        tv_obj_lst.append_column(tv_column2)
+
+        list_store = self.builder.get_object('list_store_objects')
+        lst_elems = []
+        for elem in lst:
+            tmp_lst = []
+            lst_elems.append(elem[0])
+            tmp_lst.append(str(elem[0]))
+            tmp_lst.append(elem[1])
+            list_store.append(tmp_lst)
+        cell = Gtk.CellRendererText()
+        tv_obj_lst.set_cursor(lst_elems.index(self.selected_object_prop['obj_id']))
+
+
+
 
     def upload_all_fildes(self):
         #RealName
@@ -183,6 +207,17 @@ class GUI:
         lst2 = [x[0] for x in lst]
         cmbx.set_active(lst2.index(self.selected_object_prop[props]))
         cmbx.set_entry_text_column(1)
+
+
+    def go_to_lastest_object(self,btn):
+        self.scan_object.init_to_last_object()
+        self.selected_object_prop = self.scan_object.get_current_object_prop()
+        self.refresh_all_components()
+
+    def go_to_last_object(self,btn):
+        #self.scan_object.previous_object()
+        pass
+
 
 def main():
     app = GUI()
