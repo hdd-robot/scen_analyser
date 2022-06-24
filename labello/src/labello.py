@@ -141,12 +141,9 @@ class GUI:
     def refresh_list_objects(self):
         lst = self.scan_object.get_object_list()
         tv_obj_lst = self.builder.get_object('treeview_object_list')
-        tv_column1 = Gtk.TreeViewColumn('ID', Gtk.CellRendererText(), text=0)
-        tv_column2 = Gtk.TreeViewColumn('Obj Name', Gtk.CellRendererText(), text=1)
-        tv_obj_lst.append_column(tv_column1)
-        tv_obj_lst.append_column(tv_column2)
 
         list_store = self.builder.get_object('list_store_objects')
+        list_store.clear()
         lst_elems = []
         for elem in lst:
             tmp_lst = []
@@ -154,6 +151,7 @@ class GUI:
             tmp_lst.append(str(elem[0]))
             tmp_lst.append(elem[1])
             list_store.append(tmp_lst)
+
         cell = Gtk.CellRendererText()
         tv_obj_lst.set_cursor(lst_elems.index(self.selected_object_prop['obj_id']))
 
@@ -215,8 +213,15 @@ class GUI:
         self.refresh_all_components()
 
     def go_to_last_object(self,btn):
-        #self.scan_object.previous_object()
-        pass
+        self.scan_object.previous_object()
+        self.selected_object_prop = self.scan_object.get_current_object_prop()
+        self.refresh_all_components()
+
+
+    def go_to_next_object(self,btn):
+        self.scan_object.next_object()
+        self.selected_object_prop = self.scan_object.get_current_object_prop()
+        self.refresh_all_components()
 
 
 def main():

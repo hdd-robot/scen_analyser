@@ -158,20 +158,13 @@ Author: Halim Djerroud
   </object>
   <object class="GtkListStore" id="list_store_objects">
     <columns>
-      <!-- column-name ID -->
+      <!-- column-name id_col -->
       <column type="gchararray"/>
-      <!-- column-name Obj -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="list_strore_images">
-    <columns>
-      <!-- column-name Name -->
-      <column type="gchararray"/>
-      <!-- column-name Description -->
+      <!-- column-name obj_col -->
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="list_strore_images"/>
   <object class="GtkWindow" id="Labello">
     <property name="name">Labello</property>
     <property name="visible">True</property>
@@ -375,6 +368,7 @@ Author: Halim Djerroud
                     <property name="label" translatable="yes">previous_row</property>
                     <property name="use-underline">True</property>
                     <property name="icon-name">go-previous</property>
+                    <signal name="clicked" handler="go_to_last_object" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -388,6 +382,7 @@ Author: Halim Djerroud
                     <property name="label" translatable="yes">next_row</property>
                     <property name="use-underline">True</property>
                     <property name="icon-name">go-next</property>
+                    <signal name="clicked" handler="go_to_next_object" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -401,7 +396,7 @@ Author: Halim Djerroud
                     <property name="label" translatable="yes">last_row</property>
                     <property name="use-underline">True</property>
                     <property name="icon-name">go-last</property>
-                    <signal name="clicked" handler="go_to_last_object" swapped="no"/>
+                    <signal name="clicked" handler="go_to_lastest_object" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -466,6 +461,28 @@ Author: Halim Djerroud
                     <property name="enable-grid-lines">both</property>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection"/>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="id_col">
+                        <property name="title" translatable="yes">ID</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="obj_col">
+                        <property name="title" translatable="yes">Name</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
                     </child>
                   </object>
                 </child>

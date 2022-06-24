@@ -9,7 +9,7 @@ import models
 
 class db_manager:
     def __init__(self):
-        self.engine = create_engine("mysql://root:mysqlpass@127.0.0.1/labello_db_v2")
+        self.engine = create_engine("mysql://root:mysqlpass@127.0.0.1/labello_db_v2",isolation_level="READ UNCOMMITTED")
         if not database_exists(self.engine.url):
             create_database(self.engine.url)
 

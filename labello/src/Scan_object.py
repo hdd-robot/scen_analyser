@@ -5,8 +5,6 @@ class Scan_object:
 
     def __init__(self):
         self.db_manager = db_manager()
-        self.current_object = 0
-        self.object_proprties = None
         self.properties = {}
 
     def init_to_last_object(self):
@@ -18,11 +16,21 @@ class Scan_object:
 
 
     def next_object(self):
-        return self.db_manager.get_next_object()
+        """ Move to next object """
+        id_next = self.db_manager.get_next_object(self.properties["obj_id"])
+        if id_next is None:
+            return
+        self.properties = self.db_manager.get_object_by_id(id_next)
 
     def previous_object(self):
         """ move to the previous object  """
-        return self.db_manager.get_previous_object()
+
+        id_previous = self.db_manager.get_previous_object(self.properties["obj_id"])
+        if id_previous is None:
+            return
+        self.properties = self.db_manager.get_object_by_id(id_previous)
+
+
 
     def move_to_object(self, obj_id):
         """ move to the  object by id  """
