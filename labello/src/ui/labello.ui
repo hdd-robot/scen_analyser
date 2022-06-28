@@ -163,6 +163,7 @@ Author: Halim Djerroud
       <!-- column-name obj_col -->
       <column type="gchararray"/>
     </columns>
+    <signal name="row-changed" handler="go_to_clicked_object" swapped="no"/>
   </object>
   <object class="GtkListStore" id="list_strore_images"/>
   <object class="GtkWindow" id="Labello">
@@ -420,6 +421,7 @@ Author: Halim Djerroud
                     <property name="label" translatable="yes">detete_selected_row</property>
                     <property name="use-underline">True</property>
                     <property name="icon-name">edit-delete</property>
+                    <signal name="clicked" handler="delete_object" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -432,6 +434,7 @@ Author: Halim Djerroud
                     <property name="can-focus">False</property>
                     <property name="use-underline">True</property>
                     <property name="icon-name">insert-object</property>
+                    <signal name="clicked" handler="new_object" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -459,6 +462,8 @@ Author: Halim Djerroud
                     <property name="vexpand">True</property>
                     <property name="model">list_store_objects</property>
                     <property name="enable-grid-lines">both</property>
+                    <property name="activate-on-single-click">True</property>
+                    <signal name="row-activated" handler="go_to_clicked_object" swapped="no"/>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection"/>
                     </child>
@@ -954,6 +959,7 @@ Author: Halim Djerroud
                 <property name="margin-end">2</property>
                 <property name="margin-top">2</property>
                 <property name="margin-bottom">3</property>
+                <signal name="clicked" handler="save_current_object" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

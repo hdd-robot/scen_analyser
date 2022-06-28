@@ -223,6 +223,28 @@ class GUI:
         self.selected_object_prop = self.scan_object.get_current_object_prop()
         self.refresh_all_components()
 
+    def go_to_clicked_object(self, tv,path,col):
+        model = tv.get_model()
+        tree_iter = model.get_iter(path)
+        row = path[0]
+        if tree_iter:
+            val = model.get_value(tree_iter,0)
+            self.scan_object.move_to_object(val)
+            self.selected_object_prop = self.scan_object.get_current_object_prop()
+            self.refresh_all_components()
+
+    def save_current_object(self, btn):
+        self.scan_object
+        pass
+
+    def new_object(self, btn):
+        self.scan_object
+        pass
+
+    def delete_object(self, btn):
+        self.scan_object
+        pass
+
 
 def main():
     app = GUI()

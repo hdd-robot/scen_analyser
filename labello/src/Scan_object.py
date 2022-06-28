@@ -34,6 +34,7 @@ class Scan_object:
 
     def move_to_object(self, obj_id):
         """ move to the  object by id  """
+        self.properties = self.db_manager.get_object_by_id(obj_id)
         pass
 
     def get_object_list(self):
