@@ -179,6 +179,8 @@ class GUI:
         obj_weight.set_text(str(self.selected_object_prop["obj_weight"]))
 
         # load combobox
+        obj_shine = self.builder.get_object('obj_size_z')
+
         self.load_cmbx('cmbx_obj_shine', self.scan_object.get_list_shine(), 'obj_shine')
         self.load_cmbx('cmbx_obj_filling', self.scan_object.get_list_filling(), 'obj_filling')
         self.load_cmbx('cmbx_obj_moveable', self.scan_object.get_list_movable(), 'obj_mov_name')
@@ -233,18 +235,123 @@ class GUI:
             self.selected_object_prop = self.scan_object.get_current_object_prop()
             self.refresh_all_components()
 
+    def update_properties_of_current_object(self):
+        obj_real_name = self.builder.get_object('obj_real_name').get_text()
+        self.scan_object.set_properties_value('obj_real_name', obj_real_name)
+
+        obj_description = self.builder.get_object('obj_description').get_text()
+        self.scan_object.set_properties_value('obj_description', obj_description)
+
+        obj_size_x = self.builder.get_object('obj_size_x').get_text()
+        self.scan_object.set_properties_value('obj_size_x', obj_size_x)
+
+        obj_size_y = self.builder.get_object('obj_size_y').get_text()
+        self.scan_object.set_properties_value('obj_size_y', obj_size_y)
+
+        obj_size_z = self.builder.get_object('obj_size_z').get_text()
+        self.scan_object.set_properties_value('obj_size_z', obj_size_z)
+
+        obj_weight = self.builder.get_object('obj_weight').get_text()
+        self.scan_object.set_properties_value('obj_weight', obj_weight)
+
+        obj_shine_index = self.builder.get_object('cmbx_obj_shine').get_active()
+        obj_shine_model = self.builder.get_object('cmbx_obj_shine').get_model()
+        iter = obj_shine_model.get_iter(obj_shine_index)
+        val = obj_shine_model.get_value(iter,0)
+        self.scan_object.set_properties_value('obj_shine', val)
+
+        obj_filling_index = self.builder.get_object('cmbx_obj_filling').get_active()
+        obj_filling_model = self.builder.get_object('cmbx_obj_filling').get_model()
+        iter = obj_filling_model.get_iter(obj_filling_index)
+        val = obj_filling_model.get_value(iter, 0)
+        self.scan_object.set_properties_value('obj_filling', val)
+
+        obj_mov_name_index = self.builder.get_object('cmbx_obj_moveable').get_active()
+        obj_mov_name_model = self.builder.get_object('cmbx_obj_moveable').get_model()
+        iter = obj_mov_name_model.get_iter(obj_mov_name_index)
+        val = obj_mov_name_model.get_value(iter, 0)
+        self.scan_object.set_properties_value('obj_mov_name', val)
+
+        obj_color_name_1_index = self.builder.get_object('cmbx_obj_color_1').get_active()
+        obj_color_name_1_model = self.builder.get_object('cmbx_obj_color_1').get_model()
+        iter = obj_color_name_1_model.get_iter(obj_color_name_1_index)
+        val = obj_color_name_1_model.get_value(iter, 0)
+        self.scan_object.set_properties_value('obj_color_name_1', val)
+
+        obj_color_name_2_index = self.builder.get_object('cmbx_obj_color_2').get_active()
+        obj_color_name_2_model = self.builder.get_object('cmbx_obj_color_2').get_model()
+        iter = obj_color_name_2_model.get_iter(obj_color_name_2_index)
+        val = obj_color_name_2_model.get_value(iter, 0)
+        self.scan_object.set_properties_value('obj_color_name_2', val)
+
+        obj_color_name_3_index = self.builder.get_object('cmbx_obj_color_3').get_active()
+        obj_color_name_3_model = self.builder.get_object('cmbx_obj_color_3').get_model()
+        iter = obj_color_name_3_model.get_iter(obj_color_name_3_index)
+        val = obj_color_name_3_model.get_value(iter, 0)
+        self.scan_object.set_properties_value('obj_color_name_3', val)
+
+        obj_mat_name_1_index = self.builder.get_object('cmbx_obj_mat_1').get_active()
+        obj_mat_name_1_model = self.builder.get_object('cmbx_obj_mat_1').get_model()
+        iter = obj_mat_name_1_model.get_iter(obj_mat_name_1_index)
+        val = obj_mat_name_1_model.get_value(iter, 0)
+        self.scan_object.set_properties_value('obj_mat_name_1', val)
+
+        obj_mat_name_2_index = self.builder.get_object('cmbx_obj_mat_2').get_active()
+        obj_mat_name_2_model = self.builder.get_object('cmbx_obj_mat_2').get_model()
+        iter = obj_mat_name_2_model.get_iter(obj_mat_name_2_index)
+        val = obj_mat_name_2_model.get_value(iter, 0)
+        self.scan_object.set_properties_value('obj_mat_name_2', val)
+
+        obj_mat_name_3_index = self.builder.get_object('cmbx_obj_mat_3').get_active()
+        obj_mat_name_3_model = self.builder.get_object('cmbx_obj_mat_3').get_model()
+        iter = obj_mat_name_3_model.get_iter(obj_mat_name_3_index)
+        val = obj_mat_name_3_model.get_value(iter, 0)
+        self.scan_object.set_properties_value('obj_mat_name_3', val)
+
+        obj_flx_name_index = self.builder.get_object('cmbx_obj_flx').get_active()
+        obj_flx_name_model = self.builder.get_object('cmbx_obj_flx').get_model()
+        iter = obj_flx_name_model.get_iter(obj_flx_name_index)
+        val = obj_flx_name_model.get_value(iter, 0)
+        self.scan_object.set_properties_value('obj_flx_name', val)
+
     def save_current_object(self, btn):
-        self.scan_object
-        pass
+        self.update_properties_of_current_object()
+        self.scan_object.save_curent_object()
+        self.refresh_all_components()
+
 
     def new_object(self, btn):
-        self.scan_object
-        pass
+        self.update_properties_of_current_object()
+        self.scan_object.add_object()
+        self.refresh_all_components()
 
     def delete_object(self, btn):
-        self.scan_object
-        pass
+        # todo : finish delete action
+        dialog = Gtk.MessageDialog(
+            title="Delete selected object",
+            parent=None,
+            type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.YES_NO,
+            message_format="Are you really want de remove this object ? ")
 
+        response = dialog.run()
+        if response == Gtk.ResponseType.YES:
+            print("OK")
+        elif response == Gtk.ResponseType.NO:
+            print("CANCEL")
+            dialog.destroy()
+            return
+
+        # model = tv.get_model()
+        # tree_iter = model.get_iter(path)
+        # row = path[0]
+        # if tree_iter:
+
+
+            val = model.get_value(tree_iter,0)
+            self.scan_object.delete_curent_object()
+            self.refresh_all_components()
+        dialog.destroy()
 
 def main():
     app = GUI()

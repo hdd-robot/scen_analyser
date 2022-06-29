@@ -14,6 +14,10 @@ class Scan_object:
             return
         self.properties = self.db_manager.get_object_by_id(last_id)
 
+    def set_properties_value(self, property_name, new_value):
+        self.properties[property_name] = new_value
+
+
 
     def next_object(self):
         """ Move to next object """
@@ -29,8 +33,6 @@ class Scan_object:
         if id_previous is None:
             return
         self.properties = self.db_manager.get_object_by_id(id_previous)
-
-
 
     def move_to_object(self, obj_id):
         """ move to the  object by id  """
@@ -62,9 +64,8 @@ class Scan_object:
         lst = self.db_manager.get_list_material()
         return lst
 
-
     def add_categorie(self, properties):
-        """ add categorie """
+        """ add categories """
         self.db_manager.add_new_categorie(properties);
         return
 
@@ -82,8 +83,6 @@ class Scan_object:
         """ get list of flexible """
         lst = self.db_manager.get_list_flexible()
         return lst
-
-
 
     def add_shine(self, properties):
         """ add categorie """
@@ -115,7 +114,6 @@ class Scan_object:
         lst = self.db_manager.get_list_movable()
         return lst
 
-
     def get_list_subcategories(self, id_categorie):
         """ get list of subcategories """
         lst = self.db_manager.get_list_subcategories(id_categorie)
@@ -126,14 +124,22 @@ class Scan_object:
         lst = self.db_manager.get_list_objectName(id_subcategorie)
         return lst
 
-
     def add_material(self, properties):
         """ add material """
         pass
 
-    def add_object(self, properties):
-        """ proprties ar in dictionary  """
-        pass
+    def add_object(self):
+        self.db_manager.add_new_object(self.properties)
+        self.init_to_last_object()
+
+    def save_curent_object(self):
+        """ save curent object  """
+        self.db_manager.update_object(self.properties)
+
+    def delete_curent_object(self):
+        """ delete curent object  """
+        self.db_manager.delete_object(self.properties['obj_id'])
+        self.init_to_last_object()
 
     def get_current_object_prop(self):
         """ return dictionaty with object proprty """
@@ -150,6 +156,3 @@ class Scan_object:
             ]
         """
         return None
-
-
-

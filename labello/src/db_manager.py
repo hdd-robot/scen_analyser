@@ -305,7 +305,58 @@ class db_manager:
         return last_obj_id[0]
 
     def add_new_object(self, properties):
-        pass
+        obj = models.Object()
+        obj.obj_real_name = properties['obj_real_name']
+        obj.obj_real_description = properties['obj_real_description']
+        #obj.obj_date_create = properties['obj_date_create']
+        obj.obj_size_length_x = properties['obj_size_length_x']
+        obj.obj_size_width_y = properties['obj_size_width_y']
+        obj.obj_size_height_z = properties['obj_size_height_z']
+        obj.obj_shine = properties['obj_shine']
+        obj.obj_filling = properties['obj_filling']
+        obj.obj_roughness = properties['obj_roughness']
+        obj.obj_weight = properties['obj_weight']
+        obj.obj_obn_name = properties['obj_obn_name']
+        obj.obj_shp_name = properties['obj_shp_name']
+        obj.obj_color_name_1 = properties['obj_color_name_1']
+        obj.obj_color_name_2 = properties['obj_color_name_2']
+        obj.obj_color_name_3 = properties['obj_color_name_3']
+        obj.obj_mat_name_1 = properties['obj_mat_name_1']
+        obj.obj_mat_name_2 = properties['obj_mat_name_2']
+        obj.obj_mat_name_3 = properties['obj_mat_name_3']
+        obj.obj_mov_name = properties['obj_mov_name']
+        obj.obj_flx_name = properties['obj_flx_name']
+        self.session.add(obj)
+        self.session.commit()
+
 
     def update_object(self, properties):
-        pass
+        obj = self.session.query(models.Object).filter(models.Object.obj_id == properties['obj_id']).one()
+        obj.obj_real_name = properties['obj_real_name']
+        obj.obj_real_description = properties['obj_real_description']
+        # obj.obj_date_create = properties['obj_date_create']
+        obj.obj_size_length_x = properties['obj_size_length_x']
+        obj.obj_size_width_y = properties['obj_size_width_y']
+        obj.obj_size_height_z = properties['obj_size_height_z']
+        obj.obj_shine = properties['obj_shine']
+        obj.obj_filling = properties['obj_filling']
+        obj.obj_roughness = properties['obj_roughness']
+        obj.obj_weight = properties['obj_weight']
+        obj.obj_obn_name = properties['obj_obn_name']
+        obj.obj_shp_name = properties['obj_shp_name']
+        obj.obj_color_name_1 = properties['obj_color_name_1']
+        obj.obj_color_name_2 = properties['obj_color_name_2']
+        obj.obj_color_name_3 = properties['obj_color_name_3']
+        obj.obj_mat_name_1 = properties['obj_mat_name_1']
+        obj.obj_mat_name_2 = properties['obj_mat_name_2']
+        obj.obj_mat_name_3 = properties['obj_mat_name_3']
+        obj.obj_mov_name = properties['obj_mov_name']
+        obj.obj_flx_name = properties['obj_flx_name']
+        self.session.commit()
+
+    def delete_object(self, obj_id):
+        obj = self.session.query(models.Object).filter(models.Object.obj_id == obj_id).one()
+        obj.delete()
+        self.session.commit()
+
+
