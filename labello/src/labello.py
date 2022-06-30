@@ -23,8 +23,10 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, Gdk
 import os, sys
 from Scan_object import *
+from ImageManager import *
 
-
+import cv2
+import numpy as np
 
 # Comment the first line and uncomment the second before installing
 # or making the tarball (alternatively, use project variables)
@@ -36,6 +38,9 @@ class GUI:
         self.scan_object = Scan_object()
         self.scan_object.init_to_last_object()
         self.selected_object_prop = self.scan_object.get_current_object_prop()
+
+        ### CAMERA
+        self.image_manager = ImageManager()
 
         screen = Gdk.Screen.get_default()
         provider = Gtk.CssProvider()
@@ -61,6 +66,7 @@ class GUI:
         self.builder.connect_signals(self)
         self.refresh_all_components()
         self.window = self.builder.get_object('Labello')
+        self.window.maximize()
         self.window.show_all()
 
     def on_window_destroy(self, window):
@@ -427,6 +433,54 @@ class GUI:
 
     def create_new_image(self):
         pass
+
+
+    def start_image_captur(self, btn):
+        print("start image captur ")
+
+        # if self.image_manager.check_camera_is_connected() is False:
+        #     return
+
+        rgb_image  = self.builder.get_object('rgb_image')
+        pc_image  = self.builder.get_object('pc_image')
+        spect_image  = self.builder.get_object('spect_image')
+
+
+        ### SHOW RGB IMAGE
+        rgb_img = self.image_manager.get_next_rgb_image()
+        pixbuf = GdkPixbuf.Pixbuf.new_from_data(rgb_img.tobytes(),
+                                        GdkPixbuf.Colorspace.RGB,
+                                        False,
+                                        8,
+                                        rgb_img.shape[1],
+                                        rgb_img.shape[0],
+                                        rgb_img.shape[2]*rgb_img.shape[1])
+        rgb_image.set_from_pixbuf(pixbuf.copy())
+
+        ### SHOW PC IMAGE
+        pc_ima = self.image_manager.get_next_pc_image()
+        pixbuf = GdkPixbuf.Pixbuf.new_from_data(pc_ima.tobytes(),
+                                                GdkPixbuf.Colorspace.RGB,
+                                                False,
+                                                8,
+                                                pc_ima.shape[1],
+                                                pc_ima.shape[0],
+                                                pc_ima.shape[2] * rgb_img.shape[1])
+        pc_image.set_from_pixbuf(pixbuf.copy())
+
+
+        ### SHOW SPECTRO IMAGE
+        spect_img = self.image_manager.get_next_specto_image()
+        pixbuf = GdkPixbuf.Pixbuf.new_from_data(spect_img.tobytes(),
+                                                GdkPixbuf.Colorspace.RGB,
+                                                False,
+                                                8,
+                                                spect_img.shape[1],
+                                                spect_img.shape[0],
+                                                spect_img.shape[2] * rgb_img.shape[1])
+        spect_image.set_from_pixbuf(pixbuf.copy())
+
+
 
 
 
