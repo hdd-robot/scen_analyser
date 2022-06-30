@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import mapper, sessionmaker, declarative_base
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.sql.expression import func
+from sqlalchemy import delete
 from sqlalchemy.orm.exc import NoResultFound
 
 import models
@@ -356,7 +357,7 @@ class db_manager:
 
     def delete_object(self, obj_id):
         obj = self.session.query(models.Object).filter(models.Object.obj_id == obj_id).one()
-        obj.delete()
+        self.session.delete(obj)
         self.session.commit()
 
 

@@ -135,11 +135,12 @@ class Scan_object:
     def save_curent_object(self):
         """ save curent object  """
         self.db_manager.update_object(self.properties)
+        self.move_to_object(self.properties["obj_id"])
 
     def delete_curent_object(self):
         """ delete curent object  """
         self.db_manager.delete_object(self.properties['obj_id'])
-        self.init_to_last_object()
+        self.next_object()
 
     def get_current_object_prop(self):
         """ return dictionaty with object proprty """

@@ -249,6 +249,7 @@ Author: Halim Djerroud
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="hexpand">True</property>
+                    <signal name="changed" handler="cmbx_subcategorie_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -344,6 +345,7 @@ Author: Halim Djerroud
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="hexpand">True</property>
+                    <signal name="changed" handler="cmbx_categorie_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -480,7 +482,7 @@ Author: Halim Djerroud
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn" id="obj_col">
-                        <property name="title" translatable="yes">Name</property>
+                        <property name="title" translatable="yes">Name object</property>
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
@@ -1097,13 +1099,14 @@ Author: Halim Djerroud
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="nb_shots">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="margin-start">4</property>
                     <property name="margin-end">4</property>
                     <property name="margin-bottom">4</property>
-                    <property name="input-purpose">number</property>
+                    <property name="text" translatable="yes">12</property>
+                    <property name="input-purpose">digits</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1132,7 +1135,7 @@ Author: Halim Djerroud
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-bottom">4</property>
-                    <property name="label" translatable="yes">Frame : 03</property>
+                    <property name="label" translatable="yes">Frame : </property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1184,6 +1187,22 @@ Author: Halim Djerroud
                         <property name="model">list_strore_images</property>
                         <child internal-child="selection">
                           <object class="GtkTreeSelection"/>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="img_id">
+                            <property name="title" translatable="yes">ID</property>
+                            <child>
+                              <object class="GtkCellRendererText"/>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="img_name">
+                            <property name="title" translatable="yes">Name image</property>
+                            <child>
+                              <object class="GtkCellRendererText"/>
+                            </child>
+                          </object>
                         </child>
                       </object>
                     </child>

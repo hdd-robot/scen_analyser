@@ -67,11 +67,12 @@ class GUI:
         Gtk.main_quit()
 
     def refresh_all_components(self):
+        self.selected_object_prop = self.scan_object.get_current_object_prop()
+        self.upload_all_fildes()
+        self.refresh_list_objects()
         self.refresh_cmbx_cat_list()
         self.refresh_cmbx_subcat_list()
         self.refresh_cmbx_object_name_list()
-        self.upload_all_fildes()
-        self.refresh_list_objects()
 
 
     def on_add_categorie(self,widget):
@@ -136,6 +137,72 @@ class GUI:
         cmbx.pack_start(cell, True)
         cmbx.add_attribute(cell, 'text', 0)
         cmbx.set_active(lst_obname.index(self.selected_object_prop['obn_name']))
+
+
+    def cmbx_categorie_changed(self, cmbx):
+        obj_cat_index = self.builder.get_object('cmbx_cat_list').get_active()
+        obj_cat_model = self.builder.get_object('cmbx_cat_list').get_model()
+
+        if obj_cat_index is None or obj_cat_model is None :
+            return
+
+        iter = obj_cat_model.get_iter(obj_cat_index)
+        val = obj_cat_model.get_value(iter, 0)
+
+        if (self.selected_object_prop['cat_name'] == val):
+            # changed to real value
+            self.refresh_cmbx_subcat_list()
+            self.refresh_cmbx_object_name_list()
+            return
+
+        #changed to new value
+        sub_cat_lst = self.scan_object.get_list_subcategories(val)
+        cmbx = self.builder.get_object('cmbx_subcat_list')
+        cmbx.clear()
+        liststore = Gtk.ListStore(str, str)
+        lst_scat = []
+        for elem in sub_cat_lst:
+            liststore.append(elem)
+            lst_scat.append(elem[0])
+        cmbx.set_model(liststore)
+        cell = Gtk.CellRendererText()
+        cmbx.pack_start(cell, True)
+        cmbx.add_attribute(cell, 'text', 0)
+        #cmbx.set_active(lst_scat.index(0))
+        cmbx.set_entry_text_column(1)
+
+
+    def cmbx_subcategorie_changed(self, cmbx):
+        obj_subcat_index = self.builder.get_object('cmbx_subcat_list').get_active()
+        obj_subcat_model = self.builder.get_object('cmbx_subcat_list').get_model()
+
+        if obj_subcat_index is None or obj_subcat_model is None:
+            return
+
+        iter = obj_subcat_model.get_iter(obj_subcat_index)
+        val = obj_subcat_model.get_value(iter, 0)
+
+
+        if (self.selected_object_prop['scat_name'] == val):
+            # changed to real value
+            self.refresh_cmbx_object_name_list()
+            return
+
+        #changed to new value
+        obj_name_lst = self.scan_object.get_list_object_name(val)
+        cmbx = self.builder.get_object('cmbx_obj_name_list')
+        cmbx.clear()
+        liststore = Gtk.ListStore(str, str)
+        lst_scat = []
+        for elem in obj_name_lst:
+            liststore.append(elem)
+            lst_scat.append(elem[0])
+        cmbx.set_model(liststore)
+        cell = Gtk.CellRendererText()
+        cmbx.pack_start(cell, True)
+        cmbx.add_attribute(cell, 'text', 0)
+        #cmbx.set_active(lst_scat.index(0))
+        cmbx.set_entry_text_column(1)
 
 
     def refresh_list_objects(self):
@@ -243,13 +310,13 @@ class GUI:
         self.scan_object.set_properties_value('obj_description', obj_description)
 
         obj_size_x = self.builder.get_object('obj_size_x').get_text()
-        self.scan_object.set_properties_value('obj_size_x', obj_size_x)
+        self.scan_object.set_properties_value('obj_size_length_x', obj_size_x)
 
         obj_size_y = self.builder.get_object('obj_size_y').get_text()
-        self.scan_object.set_properties_value('obj_size_y', obj_size_y)
+        self.scan_object.set_properties_value('obj_size_width_y', obj_size_y)
 
         obj_size_z = self.builder.get_object('obj_size_z').get_text()
-        self.scan_object.set_properties_value('obj_size_z', obj_size_z)
+        self.scan_object.set_properties_value('obj_size_height_z', obj_size_z)
 
         obj_weight = self.builder.get_object('obj_weight').get_text()
         self.scan_object.set_properties_value('obj_weight', obj_weight)
@@ -314,6 +381,14 @@ class GUI:
         val = obj_flx_name_model.get_value(iter, 0)
         self.scan_object.set_properties_value('obj_flx_name', val)
 
+        ### OBJNAME
+        obj_name_index = self.builder.get_object('cmbx_obj_name_list').get_active()
+        obj_name_model = self.builder.get_object('cmbx_obj_name_list').get_model()
+        iter = obj_name_model.get_iter(obj_name_index)
+        val = obj_name_model.get_value(iter, 0)
+        self.scan_object.set_properties_value('obj_obn_name', val)
+
+
     def save_current_object(self, btn):
         self.update_properties_of_current_object()
         self.scan_object.save_curent_object()
@@ -322,6 +397,10 @@ class GUI:
 
     def new_object(self, btn):
         self.update_properties_of_current_object()
+        self.scan_object.set_properties_value('obj_size_length_x', 0)
+        self.scan_object.set_properties_value('obj_size_width_y', 0)
+        self.scan_object.set_properties_value('obj_size_height_z', 0)
+        self.scan_object.set_properties_value('obj_weight', 0)
         self.scan_object.add_object()
         self.refresh_all_components()
 
@@ -330,28 +409,28 @@ class GUI:
         dialog = Gtk.MessageDialog(
             title="Delete selected object",
             parent=None,
-            type=Gtk.MessageType.INFO,
+            message_type=Gtk.MessageType.INFO,
             buttons=Gtk.ButtonsType.YES_NO,
-            message_format="Are you really want de remove this object ? ")
+            text="Are you really want de remove this object ? ",
+            modal=True)
 
         response = dialog.run()
-        if response == Gtk.ResponseType.YES:
-            print("OK")
-        elif response == Gtk.ResponseType.NO:
+        if response == Gtk.ResponseType.NO:
             print("CANCEL")
             dialog.destroy()
             return
 
-        # model = tv.get_model()
-        # tree_iter = model.get_iter(path)
-        # row = path[0]
-        # if tree_iter:
-
-
-            val = model.get_value(tree_iter,0)
-            self.scan_object.delete_curent_object()
-            self.refresh_all_components()
+        self.scan_object.delete_curent_object()
+        self.refresh_all_components()
         dialog.destroy()
+
+
+    def create_new_image(self):
+        pass
+
+
+
+
 
 def main():
     app = GUI()
