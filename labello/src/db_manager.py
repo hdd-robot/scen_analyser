@@ -361,3 +361,12 @@ class db_manager:
         self.session.commit()
 
 
+    ### Images
+
+    def get_list_all_images(self, obj_id):
+        res = self.session.query(models.Image).filter(models.Image.img_obj_id == obj_id).all()
+        lst = list()
+        for e in res:
+            lst.append(e.as_dict())
+        return lst
+

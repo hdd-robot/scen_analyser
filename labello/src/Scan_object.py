@@ -156,4 +156,7 @@ class Scan_object:
               [spectroscop data]
             ]
         """
-        return None
+        lst = []
+        for elem in self.db_manager.get_list_all_images(self.properties['obj_id']):
+            lst.append(list(elem.values()))
+        return lst

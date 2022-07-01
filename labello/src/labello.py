@@ -19,11 +19,18 @@
 
 
 import gi
+
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, Gdk
 import os, sys
 from Scan_object import *
 from ImageManager import *
+
+
+from matplotlib.backends.backend_gtk3agg import (
+    FigureCanvasGTK3Agg as FigureCanvas)
+from matplotlib.figure import Figure
+
 
 import cv2
 import numpy as np
@@ -31,6 +38,7 @@ import numpy as np
 # Comment the first line and uncomment the second before installing
 # or making the tarball (alternatively, use project variables)
 UI_FILE = "ui/labello.ui"
+
 
 class GUI:
     def __init__(self):
@@ -79,9 +87,10 @@ class GUI:
         self.refresh_cmbx_cat_list()
         self.refresh_cmbx_subcat_list()
         self.refresh_cmbx_object_name_list()
+        self.refresh_image_list()
+        self.draw_spectro()
 
-
-    def on_add_categorie(self,widget):
+    def on_add_categorie(self, widget):
         dialog = self.builder.get_object('cetegorie_dialog_box')
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -96,7 +105,7 @@ class GUI:
         cmbx.clear()
         # the liststore
         liststore = Gtk.ListStore(str, str)
-        lst_cat=[]
+        lst_cat = []
         for elem in lst:
             liststore.append(elem)
             lst_cat.append(elem[0])
@@ -105,7 +114,6 @@ class GUI:
         cmbx.pack_start(cell, True)
         cmbx.add_attribute(cell, 'text', 0)
         cmbx.set_active(lst_cat.index(self.selected_object_prop['scat_cat_name']))
-
 
         cmbx.set_entry_text_column(1)
 
@@ -144,12 +152,11 @@ class GUI:
         cmbx.add_attribute(cell, 'text', 0)
         cmbx.set_active(lst_obname.index(self.selected_object_prop['obn_name']))
 
-
     def cmbx_categorie_changed(self, cmbx):
         obj_cat_index = self.builder.get_object('cmbx_cat_list').get_active()
         obj_cat_model = self.builder.get_object('cmbx_cat_list').get_model()
 
-        if obj_cat_index is None or obj_cat_model is None :
+        if obj_cat_index is None or obj_cat_model is None:
             return
 
         iter = obj_cat_model.get_iter(obj_cat_index)
@@ -161,7 +168,7 @@ class GUI:
             self.refresh_cmbx_object_name_list()
             return
 
-        #changed to new value
+        # changed to new value
         sub_cat_lst = self.scan_object.get_list_subcategories(val)
         cmbx = self.builder.get_object('cmbx_subcat_list')
         cmbx.clear()
@@ -174,9 +181,8 @@ class GUI:
         cell = Gtk.CellRendererText()
         cmbx.pack_start(cell, True)
         cmbx.add_attribute(cell, 'text', 0)
-        #cmbx.set_active(lst_scat.index(0))
+        # cmbx.set_active(lst_scat.index(0))
         cmbx.set_entry_text_column(1)
-
 
     def cmbx_subcategorie_changed(self, cmbx):
         obj_subcat_index = self.builder.get_object('cmbx_subcat_list').get_active()
@@ -188,13 +194,12 @@ class GUI:
         iter = obj_subcat_model.get_iter(obj_subcat_index)
         val = obj_subcat_model.get_value(iter, 0)
 
-
         if (self.selected_object_prop['scat_name'] == val):
             # changed to real value
             self.refresh_cmbx_object_name_list()
             return
 
-        #changed to new value
+        # changed to new value
         obj_name_lst = self.scan_object.get_list_object_name(val)
         cmbx = self.builder.get_object('cmbx_obj_name_list')
         cmbx.clear()
@@ -207,9 +212,8 @@ class GUI:
         cell = Gtk.CellRendererText()
         cmbx.pack_start(cell, True)
         cmbx.add_attribute(cell, 'text', 0)
-        #cmbx.set_active(lst_scat.index(0))
+        # cmbx.set_active(lst_scat.index(0))
         cmbx.set_entry_text_column(1)
-
 
     def refresh_list_objects(self):
         lst = self.scan_object.get_object_list()
@@ -228,11 +232,8 @@ class GUI:
         cell = Gtk.CellRendererText()
         tv_obj_lst.set_cursor(lst_elems.index(self.selected_object_prop['obj_id']))
 
-
-
-
     def upload_all_fildes(self):
-        #RealName
+        # RealName
         obj_real_name = self.builder.get_object('obj_real_name')
         obj_real_name.set_text(self.selected_object_prop["obj_real_name"])
         # Description
@@ -265,8 +266,6 @@ class GUI:
         self.load_cmbx('cmbx_obj_mat_3', self.scan_object.get_list_material(), 'obj_mat_name_3')
         self.load_cmbx('cmbx_obj_flx', self.scan_object.get_list_flexible(), 'obj_flx_name')
 
-
-
     def load_cmbx(self, cmbx_name, lst, props):
         cmbx = self.builder.get_object(cmbx_name)
         cmbx.clear()
@@ -281,29 +280,27 @@ class GUI:
         cmbx.set_active(lst2.index(self.selected_object_prop[props]))
         cmbx.set_entry_text_column(1)
 
-
-    def go_to_lastest_object(self,btn):
+    def go_to_lastest_object(self, btn):
         self.scan_object.init_to_last_object()
         self.selected_object_prop = self.scan_object.get_current_object_prop()
         self.refresh_all_components()
 
-    def go_to_last_object(self,btn):
+    def go_to_last_object(self, btn):
         self.scan_object.previous_object()
         self.selected_object_prop = self.scan_object.get_current_object_prop()
         self.refresh_all_components()
 
-
-    def go_to_next_object(self,btn):
+    def go_to_next_object(self, btn):
         self.scan_object.next_object()
         self.selected_object_prop = self.scan_object.get_current_object_prop()
         self.refresh_all_components()
 
-    def go_to_clicked_object(self, tv,path,col):
+    def go_to_clicked_object(self, tv, path, col):
         model = tv.get_model()
         tree_iter = model.get_iter(path)
         row = path[0]
         if tree_iter:
-            val = model.get_value(tree_iter,0)
+            val = model.get_value(tree_iter, 0)
             self.scan_object.move_to_object(val)
             self.selected_object_prop = self.scan_object.get_current_object_prop()
             self.refresh_all_components()
@@ -330,7 +327,7 @@ class GUI:
         obj_shine_index = self.builder.get_object('cmbx_obj_shine').get_active()
         obj_shine_model = self.builder.get_object('cmbx_obj_shine').get_model()
         iter = obj_shine_model.get_iter(obj_shine_index)
-        val = obj_shine_model.get_value(iter,0)
+        val = obj_shine_model.get_value(iter, 0)
         self.scan_object.set_properties_value('obj_shine', val)
 
         obj_filling_index = self.builder.get_object('cmbx_obj_filling').get_active()
@@ -394,12 +391,10 @@ class GUI:
         val = obj_name_model.get_value(iter, 0)
         self.scan_object.set_properties_value('obj_obn_name', val)
 
-
     def save_current_object(self, btn):
         self.update_properties_of_current_object()
         self.scan_object.save_curent_object()
         self.refresh_all_components()
-
 
     def new_object(self, btn):
         self.update_properties_of_current_object()
@@ -430,31 +425,45 @@ class GUI:
         self.refresh_all_components()
         dialog.destroy()
 
-
     def create_new_image(self):
         pass
+
+    def refresh_image_list(self):
+        print("refresh_image_list")
+        lst = self.scan_object.get_list_images()
+        tv_img_lst = self.builder.get_object('treeview_image_list')
+        list_store = self.builder.get_object('list_strore_images')
+        list_store.clear()
+        lst_elems = []
+        for elem in lst:
+            tmp_lst = []
+            lst_elems.append(elem[0])
+            tmp_lst.append(str(elem[0]))
+            tmp_lst.append(elem[1])
+            list_store.append(tmp_lst)
+
+        cell = Gtk.CellRendererText()
+        #tv_img_lst.set_cursor(lst_elems[....])
 
 
     def start_image_captur(self, btn):
         print("start image captur ")
-
         # if self.image_manager.check_camera_is_connected() is False:
         #     return
 
-        rgb_image  = self.builder.get_object('rgb_image')
-        pc_image  = self.builder.get_object('pc_image')
-        spect_image  = self.builder.get_object('spect_image')
-
+        rgb_image = self.builder.get_object('rgb_image')
+        pc_image = self.builder.get_object('pc_image')
+        spect_image = self.builder.get_object('spect_image')
 
         ### SHOW RGB IMAGE
         rgb_img = self.image_manager.get_next_rgb_image()
         pixbuf = GdkPixbuf.Pixbuf.new_from_data(rgb_img.tobytes(),
-                                        GdkPixbuf.Colorspace.RGB,
-                                        False,
-                                        8,
-                                        rgb_img.shape[1],
-                                        rgb_img.shape[0],
-                                        rgb_img.shape[2]*rgb_img.shape[1])
+                                                GdkPixbuf.Colorspace.RGB,
+                                                False,
+                                                8,
+                                                rgb_img.shape[1],
+                                                rgb_img.shape[0],
+                                                rgb_img.shape[2] * rgb_img.shape[1])
         rgb_image.set_from_pixbuf(pixbuf.copy())
 
         ### SHOW PC IMAGE
@@ -468,7 +477,6 @@ class GUI:
                                                 pc_ima.shape[2] * rgb_img.shape[1])
         pc_image.set_from_pixbuf(pixbuf.copy())
 
-
         ### SHOW SPECTRO IMAGE
         spect_img = self.image_manager.get_next_specto_image()
         pixbuf = GdkPixbuf.Pixbuf.new_from_data(spect_img.tobytes(),
@@ -481,10 +489,18 @@ class GUI:
         spect_image.set_from_pixbuf(pixbuf.copy())
 
 
-
-
-
-
+    def draw_spectro(self):
+        print("draw_spectro ")
+        rgb_image = self.builder.get_object('specto_graph')
+        fig = Figure(figsize=(5, 4), dpi=100)
+        ax = fig.add_subplot()
+        t = np.arange(0.0, 3.0, 0.01)
+        s = np.sin(2 * np.pi * t)
+        ax.plot(t, s)
+        canvas = FigureCanvas(fig)  # a Gtk.DrawingArea
+        canvas.set_size_request(800, 400)
+        rgb_image.set_border_width(10)
+        rgb_image.add(canvas)
 
 def main():
     app = GUI()
@@ -493,4 +509,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
