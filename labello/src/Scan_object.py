@@ -1,11 +1,14 @@
 from db_manager import *
-
+from Params import *
 
 class Scan_object:
 
     def __init__(self):
+
         self.db_manager = db_manager()
         self.properties = {}
+        self.list_image = []
+        self.current_image = {}
 
     def init_to_last_object(self):
         last_id = self.db_manager.get_last_object()
@@ -160,3 +163,39 @@ class Scan_object:
         for elem in self.db_manager.get_list_all_images(self.properties['obj_id']):
             lst.append(list(elem.values()))
         return lst
+
+
+    def create_new_images(self, data):
+        self.current_image['img_obj_id'] = self.properties['obj_id']
+        self.db_manager.add_new_image(self.current_image)
+
+        img_id = self.db_manager.get_last_image_id()
+        self.current_image['img_id'] = img_id
+        rgb_img_name = "rgb_" + str(self.properties['obj_id']) + '_' + str(img_id) + ".jpg"
+        depth_name = "depth_"  + str(self.properties['obj_id']) + '_' + str(img_id) + ".png"
+        rgb_specrto_name = "spectro_" + str(self.properties['obj_id']) + '_' + str(img_id) + ".png"
+
+        self.current_image['img_rgb_name'] = rgb_img_name
+        self.current_image['img_rgb_type'] = ""
+        self.current_image['img_rgb_size'] = 0
+        self.current_image['img_rgb_file_size'] = 0
+        self.current_image['img_depth_name'] = depth_name
+        self.current_image['img_depth_size'] = 0
+        self.current_image['img_depth_type'] = ""
+        self.current_image['img_depth_file_size'] = 0
+        self.current_image['img_depth_intrinsec'] = ""
+        self.current_image['img_depth_extrinsec'] = ""
+        self.current_image['img_depth_turntable_deg'] = 0
+        self.current_image['img_depth_distance'] = ""
+        self.current_image['img_pc_name'] = ""
+        self.current_image['img_pc_size'] = ""
+        self.current_image['img_pc_type'] = ""
+        self.current_image['img_pc_file_size'] = ""
+        self.current_image['img_pc_intrinsec'] = ""
+        self.current_image['img_pc_extrinsec'] = ""
+        self.current_image['img_pc_turntable_deg'] = 0
+        self.current_image['img_pc_distance '] = 0
+        self.current_image['img_specto_data'] = ""
+        self.current_image['img_specto_position'] = 0
+        self.db_manager.update_image(self.current_image)
+        return self.current_image

@@ -370,3 +370,65 @@ class db_manager:
             lst.append(e.as_dict())
         return lst
 
+    def get_last_image_id(self):
+        """
+        get id of latest Image saved in database
+        """
+        last_img_id = self.session.query(func.max(models.Image.img_id)).one()
+        return last_img_id[0]
+
+
+    def add_new_image(self, img_properties):
+        img_obj = models.Image()
+        img_obj.img_obj_id = img_properties['img_obj_id']
+        # img_obj.img_rgb_name = img_properties['img_rgb_name']
+        # img_obj.img_rgb_type = img_properties['img_rgb_type']
+        # img_obj.img_rgb_size = img_properties['img_rgb_size']
+        # img_obj.img_rgb_file_size = img_properties['img_rgb_file_size']
+        # img_obj.img_depth_name = img_properties['img_depth_name']
+        # img_obj.img_depth_size = img_properties['img_depth_size']
+        # img_obj.img_depth_type = img_properties['img_depth_type']
+        # img_obj.img_depth_file_size = img_properties['img_depth_file_size']
+        # img_obj.img_depth_intrinsec = img_properties['img_depth_intrinsec']
+        # img_obj.img_depth_extrinsec = img_properties['img_depth_extrinsec']
+        # img_obj.img_depth_turntable_deg = img_properties['img_depth_turntable_deg']
+        # img_obj.img_depth_distance = img_properties['img_depth_distance']
+        # img_obj.img_depth_distance = img_properties['img_pc_name']
+        # img_obj.img_pc_size = img_properties['img_pc_size']
+        # img_obj.img_pc_type = img_properties['img_pc_type']
+        # img_obj.img_pc_file_size = img_properties['img_pc_file_size']
+        # img_obj.img_pc_intrinsec = img_properties['img_pc_intrinsec']
+        # img_obj.img_pc_extrinsec = img_properties['img_pc_extrinsec']
+        # img_obj.img_pc_turntable_deg = img_properties['img_pc_turntable_deg']
+        # img_obj.img_pc_distance = img_properties['img_pc_distance ']
+        # img_obj.img_specto_data = img_properties['img_specto_data']
+        # img_obj.img_specto_position = img_properties['img_specto_position']
+        self.session.add(img_obj)
+        self.session.commit()
+
+    def update_image(self, img_properties):
+        img_obj = self.session.query(models.Image).filter(models.Image.img_id == img_properties['img_id']).one()
+        img_obj.img_obj_id = img_properties['img_obj_id']
+        img_obj.img_rgb_name = img_properties['img_rgb_name']
+        img_obj.img_rgb_type = img_properties['img_rgb_type']
+        img_obj.img_rgb_size = img_properties['img_rgb_size']
+        img_obj.img_rgb_file_size = img_properties['img_rgb_file_size']
+        img_obj.img_depth_name = img_properties['img_depth_name']
+        img_obj.img_depth_size = img_properties['img_depth_size']
+        img_obj.img_depth_type = img_properties['img_depth_type']
+        img_obj.img_depth_file_size = img_properties['img_depth_file_size']
+        img_obj.img_depth_intrinsec = img_properties['img_depth_intrinsec']
+        img_obj.img_depth_extrinsec = img_properties['img_depth_extrinsec']
+        img_obj.img_depth_turntable_deg = img_properties['img_depth_turntable_deg']
+        img_obj.img_depth_distance = img_properties['img_depth_distance']
+        img_obj.img_depth_distance = img_properties['img_pc_name']
+        img_obj.img_pc_size = img_properties['img_pc_size']
+        img_obj.img_pc_type = img_properties['img_pc_type']
+        img_obj.img_pc_file_size = img_properties['img_pc_file_size']
+        img_obj.img_pc_intrinsec = img_properties['img_pc_intrinsec']
+        img_obj.img_pc_extrinsec = img_properties['img_pc_extrinsec']
+        img_obj.img_pc_turntable_deg = img_properties['img_pc_turntable_deg']
+        img_obj.img_pc_distance = img_properties['img_pc_distance ']
+        img_obj.img_specto_data = img_properties['img_specto_data']
+        img_obj.img_specto_position = img_properties['img_specto_position']
+        self.session.commit()

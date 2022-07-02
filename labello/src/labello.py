@@ -43,6 +43,8 @@ UI_FILE = "ui/labello.ui"
 class GUI:
     def __init__(self):
 
+        self.params = Params()
+
         self.scan_object = Scan_object()
         self.scan_object.init_to_last_object()
         self.selected_object_prop = self.scan_object.get_current_object_prop()
@@ -425,11 +427,9 @@ class GUI:
         self.refresh_all_components()
         dialog.destroy()
 
-    def create_new_image(self):
-        pass
+
 
     def refresh_image_list(self):
-        print("refresh_image_list")
         lst = self.scan_object.get_list_images()
         tv_img_lst = self.builder.get_object('treeview_image_list')
         list_store = self.builder.get_object('list_strore_images')
@@ -456,7 +456,7 @@ class GUI:
         spect_image = self.builder.get_object('spect_image')
 
         ### SHOW RGB IMAGE
-        rgb_img = self.image_manager.get_next_rgb_image()
+        rgb_img, pc_ima = self.image_manager.get_next_rgb_image()
         pixbuf = GdkPixbuf.Pixbuf.new_from_data(rgb_img.tobytes(),
                                                 GdkPixbuf.Colorspace.RGB,
                                                 False,
@@ -467,7 +467,7 @@ class GUI:
         rgb_image.set_from_pixbuf(pixbuf.copy())
 
         ### SHOW PC IMAGE
-        pc_ima = self.image_manager.get_next_pc_image()
+        #pc_ima = self.image_manager.get_next_pc_image()
         pixbuf = GdkPixbuf.Pixbuf.new_from_data(pc_ima.tobytes(),
                                                 GdkPixbuf.Colorspace.RGB,
                                                 False,
@@ -488,9 +488,27 @@ class GUI:
                                                 spect_img.shape[2] * rgb_img.shape[1])
         spect_image.set_from_pixbuf(pixbuf.copy())
 
+    def save_current_image(self, btn):
+        rgb_path = self.params.get_image_path()
+        pcd_path = self.params.get_cloud_path()
+        spectro_path = self.params.get_spectro_path()
+
+
+        data = self.scan_object.create_new_images("") # todo data
+
+        rgb_path = rgb_path + data['img_rgb_name']
+        pcd_path = pcd_path + data['img_depth_name']
+        #spectro_path = spectro_path + data['img_rgb_name']
+
+        self.image_manager.save_current_image_in_disk(rgb_path)
+        self.image_manager.save_current_pcd_in_disk(pcd_path)
+        #self.image_manager.save_current_spectro_in_disk(spectro_path)
+
+        self.refresh_image_list()
+        pass
+
 
     def draw_spectro(self):
-        print("draw_spectro ")
         rgb_image = self.builder.get_object('specto_graph')
         fig = Figure(figsize=(5, 4), dpi=100)
         ax = fig.add_subplot()

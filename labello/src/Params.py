@@ -1,26 +1,31 @@
 import os
-from pathlib import Path
-
 
 class Params:
-
-    base_path = "~/labello/dataset/"
-    image_path = base_path + "img"
-    point_cloud_path = base_path + "pcd"
-
-
     def __init__(self):
-        self.path_img = "~"
-        self.pc_img = "~"
-        pass
+        self.base_path = os.path.expanduser('~') + "/labello/dataset/"
+        self.image_path = self.base_path + "img/"
+        self.point_cloud_path = self.base_path + "pcd/"
+        self.spectro_path = self.base_path + "spectro/"
+        self.check_paths()
 
-    @classmethod
-    def create_paths(cls):
-        # basePath = Path(cls.base_path)
-        # imagePath = Path(cls.image_path)
-        # pointCloudPath = Path(cls.point_cloud_path)
-        # path = Path(imagePath)
-        # path.mkdir(parents=True, exist_ok=True)
-        # path = Path(pointCloudPath)
-        # path.mkdir(parents=True, exist_ok=True)
-        pass
+    def get_image_path(self):
+        return self.image_path
+
+    def get_cloud_path(self):
+        return self.point_cloud_path
+
+    def get_spectro_path(self):
+        return self.spectro_path
+
+    def check_paths(self):
+        if os.path.exists(self.base_path) is False:
+            os.makedirs(self.base_path)
+
+        if os.path.exists(self.image_path) is False:
+            os.makedirs(self.image_path)
+
+        if os.path.exists(self.point_cloud_path) is False:
+            os.makedirs(self.point_cloud_path)
+
+        if os.path.exists(self.spectro_path) is False:
+            os.makedirs(self.spectro_path)

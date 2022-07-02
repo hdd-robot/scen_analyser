@@ -1123,7 +1123,7 @@ Author: Halim Djerroud
                 </child>
                 <child>
                   <object class="GtkButton">
-                    <property name="label" translatable="yes">Read from turntable</property>
+                    <property name="label" translatable="yes">Read from turntable (auto save)</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -1152,13 +1152,14 @@ Author: Halim Djerroud
                 </child>
                 <child>
                   <object class="GtkButton">
-                    <property name="label" translatable="yes">One shot</property>
+                    <property name="label" translatable="yes">Save current shot</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="margin-start">4</property>
                     <property name="margin-end">12</property>
                     <property name="margin-bottom">4</property>
+                    <signal name="clicked" handler="save_current_image" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1169,7 +1170,7 @@ Author: Halim Djerroud
                 </child>
                 <child>
                   <object class="GtkButton">
-                    <property name="label" translatable="yes">Start image capure</property>
+                    <property name="label" translatable="yes">Start image capure (test)</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
