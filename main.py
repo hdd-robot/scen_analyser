@@ -3,6 +3,10 @@ import numpy as np
 import cv2
 
 try:
+
+
+
+
     # Create a context object. This object owns the handles to all connected realsense devices
     pipeline = rs.pipeline()
     config = rs.config()

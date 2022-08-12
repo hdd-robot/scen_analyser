@@ -5,7 +5,7 @@ from torchvision.io import read_image
 from torchvision.utils import draw_bounding_boxes
 
 # read input image
-img = read_image('cat.jpg')
+img = read_image('labello/src/cat.jpg')
 
 # bounding box in (xmin, ymin, xmax, ymax) format
 # top-left point=(xmin, ymin), bottom-right point = (xmax, ymax)
