@@ -164,3 +164,4 @@ class ImageManager:
         if self.image_spectro is None:
             return
         cv2.imwrite(path, self.image_spectro)
+

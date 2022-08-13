@@ -25,11 +25,12 @@ from gi.repository import Gtk, GdkPixbuf, Gdk
 import os, sys
 from Scan_object import *
 from ImageManager import *
-
+from PlateManage import *
 
 from matplotlib.backends.backend_gtk3agg import (
     FigureCanvasGTK3Agg as FigureCanvas)
 from matplotlib.figure import Figure
+import os.path
 
 
 import cv2
@@ -45,9 +46,15 @@ class GUI:
 
         self.params = Params()
 
+        self.camera_status  = "Unknow"
+        self.plate_status   = "Unknow"
+        self.spectro_status = "Unknow"
+
         self.scan_object = Scan_object()
         self.scan_object.init_to_last_object()
         self.selected_object_prop = self.scan_object.get_current_object_prop()
+
+
 
         ### CAMERA
         self.image_manager = ImageManager()
@@ -79,16 +86,21 @@ class GUI:
         self.window.maximize()
         self.window.show_all()
 
+        self.check_devices(None)
+
+
+
+
     def on_window_destroy(self, window):
         Gtk.main_quit()
 
     def refresh_all_components(self):
         self.selected_object_prop = self.scan_object.get_current_object_prop()
-        self.upload_all_fildes()
-        self.refresh_list_objects()
         self.refresh_cmbx_cat_list()
         self.refresh_cmbx_subcat_list()
         self.refresh_cmbx_object_name_list()
+        self.refresh_list_objects()
+        self.upload_all_fildes()
         self.refresh_image_list()
         self.draw_spectro()
 
@@ -220,7 +232,6 @@ class GUI:
     def refresh_list_objects(self):
         lst = self.scan_object.get_object_list()
         tv_obj_lst = self.builder.get_object('treeview_object_list')
-
         list_store = self.builder.get_object('list_store_objects')
         list_store.clear()
         lst_elems = []
@@ -233,6 +244,8 @@ class GUI:
 
         cell = Gtk.CellRendererText()
         tv_obj_lst.set_cursor(lst_elems.index(self.selected_object_prop['obj_id']))
+
+
 
     def upload_all_fildes(self):
         # RealName
@@ -411,7 +424,7 @@ class GUI:
         # todo : finish delete action
         dialog = Gtk.MessageDialog(
             title="Delete selected object",
-            parent=None,
+            parent=self.window,
             message_type=Gtk.MessageType.INFO,
             buttons=Gtk.ButtonsType.YES_NO,
             text="Are you really want de remove this object ? ",
@@ -447,9 +460,19 @@ class GUI:
 
 
     def start_image_captur(self, btn):
-        print("start image captur ")
-        # if self.image_manager.check_camera_is_connected() is False:
-        #     return
+        if self.image_manager.check_camera_is_connected() is False:
+            print("error camera ")
+            dialog = Gtk.MessageDialog(
+                title="Error camera",
+                parent=self.window,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.CLOSE,
+                text="Camera is not connected ! ",
+                modal=True)
+            response = dialog.run()
+            if response == Gtk.ResponseType.CLOSE:
+                dialog.destroy()
+            return
 
         rgb_image = self.builder.get_object('rgb_image')
         pc_image = self.builder.get_object('pc_image')
@@ -493,6 +516,20 @@ class GUI:
         pcd_path = self.params.get_cloud_path()
         spectro_path = self.params.get_spectro_path()
 
+        if len (self.scan_object.current_image) == 0:
+            if self.image_manager.check_camera_is_connected() is False:
+                print("No image ")
+                dialog = Gtk.MessageDialog(
+                    title="Error camera",
+                    parent=self.window,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.CLOSE,
+                    text="No image to save ! ",
+                    modal=True)
+                response = dialog.run()
+                if response == Gtk.ResponseType.CLOSE:
+                    dialog.destroy()
+                return
 
         data = self.scan_object.create_new_images("") # todo data
 
@@ -507,6 +544,43 @@ class GUI:
         self.refresh_image_list()
         pass
 
+    def show_clicked_image(self, tv, path, col):
+        model = tv.get_model()
+        tree_iter = model.get_iter(path)
+        row = path[0]
+        if tree_iter:
+            id_image = model.get_value(tree_iter, 0)
+            id_object = self.scan_object.get_current_object_prop()['obj_id']
+
+            self.scan_object.load_image(id_object, id_image)
+
+            rgb_path = self.params.get_image_path()
+            pcd_path = self.params.get_cloud_path()
+
+            rgb_image = self.builder.get_object('rgb_image')
+            depth_image = self.builder.get_object('pc_image')
+            spect_image = self.builder.get_object('spect_image')
+
+            rgb_file_path = rgb_path+ self.scan_object.current_image['img_rgb_name']
+            depth_file_path = pcd_path+ self.scan_object.current_image['img_depth_name']
+
+            if os.path.exists(rgb_file_path):
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    filename=rgb_file_path,
+                    width=400,
+                    height=400,
+                    preserve_aspect_ratio=True)
+                rgb_image.set_from_pixbuf(pixbuf.copy())
+
+        if os.path.exists(depth_file_path):
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                filename=depth_file_path,
+                width=400,
+                height=400,
+                preserve_aspect_ratio=True)
+            depth_image.set_from_pixbuf(pixbuf.copy())
+
+
 
     def draw_spectro(self):
         rgb_image = self.builder.get_object('specto_graph')
@@ -519,6 +593,39 @@ class GUI:
         canvas.set_size_request(800, 400)
         rgb_image.set_border_width(10)
         rgb_image.add(canvas)
+
+    def check_devices(self, btn):
+        self.check_status()
+        label_turntable = self.builder.get_object('lab_turn_tab')
+        label_camera    = self.builder.get_object('lab_camera')
+        label_spectro   = self.builder.get_object('lab_spectro')
+
+        color_turntable = "green" if self.plate_status=='OK' else "red"
+        color_camera = "green" if self.camera_status=='OK' else "red"
+        color_spectro = "green" if label_spectro=='OK' else "red"
+
+        label_turntable.set_markup("<span color='"+color_turntable+"'>Turntable: " + self.plate_status + "</span>")
+        label_camera.set_markup("<span color='"+color_camera+"'>Camera: " + self.camera_status + "</span>")
+        label_spectro.set_markup("<span color='"+color_spectro+"'>Spectroscope: " + self.spectro_status + "</span>")
+
+
+
+    def check_status(self):
+        ## Plate
+        PlateManage.init_plate()
+        if PlateManage.get_status():
+            self.plate_status = "OK"
+        else:
+            self.plate_status = "Not Respond"
+
+        if self.image_manager.check_camera_is_connected():
+            self.camera_status = "OK"
+        else:
+            self.camera_status = "Not Respond"
+
+        # todo : add check spectro
+        self.spectro_status = "NONE"
+
 
 def main():
     app = GUI()

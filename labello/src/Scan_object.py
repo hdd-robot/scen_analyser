@@ -21,7 +21,6 @@ class Scan_object:
         self.properties[property_name] = new_value
 
 
-
     def next_object(self):
         """ Move to next object """
         id_next = self.db_manager.get_next_object(self.properties["obj_id"])
@@ -31,7 +30,6 @@ class Scan_object:
 
     def previous_object(self):
         """ move to the previous object  """
-
         id_previous = self.db_manager.get_previous_object(self.properties["obj_id"])
         if id_previous is None:
             return
@@ -199,3 +197,34 @@ class Scan_object:
         self.current_image['img_specto_position'] = 0
         self.db_manager.update_image(self.current_image)
         return self.current_image
+
+    def load_image(self, obj_id, img_id):
+        self.current_image['img_obj_id'] = obj_id
+        self.current_image['img_id'] = img_id
+        rgb_img_name = "rgb_" + str(obj_id) + '_' + str(img_id) + ".jpg"
+        depth_name = "depth_"  + str(obj_id) + '_' + str(img_id) + ".png"
+        rgb_specrto_name = "spectro_" + str(obj_id) + '_' + str(img_id) + ".png"
+
+        self.current_image['img_rgb_name'] = rgb_img_name
+        self.current_image['img_rgb_type'] = ""
+        self.current_image['img_rgb_size'] = 0
+        self.current_image['img_rgb_file_size'] = 0
+        self.current_image['img_depth_name'] = depth_name
+        self.current_image['img_depth_size'] = 0
+        self.current_image['img_depth_type'] = ""
+        self.current_image['img_depth_file_size'] = 0
+        self.current_image['img_depth_intrinsec'] = ""
+        self.current_image['img_depth_extrinsec'] = ""
+        self.current_image['img_depth_turntable_deg'] = 0
+        self.current_image['img_depth_distance'] = ""
+        self.current_image['img_pc_name'] = ""
+        self.current_image['img_pc_size'] = ""
+        self.current_image['img_pc_type'] = ""
+        self.current_image['img_pc_file_size'] = ""
+        self.current_image['img_pc_intrinsec'] = ""
+        self.current_image['img_pc_extrinsec'] = ""
+        self.current_image['img_pc_turntable_deg'] = 0
+        self.current_image['img_pc_distance '] = 0
+        self.current_image['img_specto_data'] = ""
+        self.current_image['img_specto_position'] = 0
+
