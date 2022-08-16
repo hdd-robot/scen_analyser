@@ -73,7 +73,6 @@ class GUI:
                             min-height: 0px;
                             margin: 0px;
                             padding: 0px;
-                                                           
                      }
                 """
         provider.load_from_data(css)
@@ -85,7 +84,6 @@ class GUI:
         self.window = self.builder.get_object('Labello')
         self.window.maximize()
         self.window.show_all()
-
         self.check_devices(None)
 
 
@@ -516,7 +514,7 @@ class GUI:
         pcd_path = self.params.get_cloud_path()
         spectro_path = self.params.get_spectro_path()
 
-        if len (self.scan_object.current_image) == 0:
+        if self.camera_status != 'OK':
             if self.image_manager.check_camera_is_connected() is False:
                 print("No image ")
                 dialog = Gtk.MessageDialog(
@@ -625,6 +623,51 @@ class GUI:
 
         # todo : add check spectro
         self.spectro_status = "NONE"
+
+    def read_from_turntable(self, btn):
+        nb_shots_int = 0
+        nb_shots = self.builder.get_object('nb_shots').get_text()
+        try:
+            nb_shots_int = int(nb_shots)
+        except ValueError:
+            dialog = Gtk.MessageDialog(
+                title="Error value",
+                parent=self.window,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.CLOSE,
+                text="Shots mast be integer  ! ",
+                modal=True)
+            response = dialog.run()
+            if response == Gtk.ResponseType.CLOSE:
+                dialog.destroy()
+            return
+
+        if (self.plate_status != 'OK' or self.camera_status != 'OK'):
+            dialog = Gtk.MessageDialog(
+                title="Error Camera or Plate",
+                parent=self.window,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.CLOSE,
+                text="Camera or plate not respond ! ",
+                modal=True)
+            response = dialog.run()
+            if response == Gtk.ResponseType.CLOSE:
+                dialog.destroy()
+            return
+
+        if PlateManage.get_status() is False:
+            print("error Plafe  status ")
+            return
+
+        steps =  200 / nb_shots_int
+        for i in range (nb_shots_int):
+            self.start_image_captur(None)
+            time.sleep(0.1)
+            self.save_current_image(None)
+            self.refresh_all_components()
+
+            PlateManage.move_plate_steps(steps)
+            time.sleep(2)
 
 
 def main():

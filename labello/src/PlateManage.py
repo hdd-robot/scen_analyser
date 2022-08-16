@@ -1,6 +1,9 @@
 import serial
 import time
 import os.path
+
+from serial import SerialException
+
 """
 Arduino communication 
 I : init 
@@ -18,10 +21,15 @@ class PlateManage:
 
     @classmethod
     def init_plate(cls):
-        if not os.path.isfile(cls.tty):
-            PlateManage.init = False
-            return
-        cls.arduino = serial.Serial(port=cls.tty, baudrate=cls.baud_rate, timeout=1)
+        # print(cls.tty)
+        # print("====" + str(os.isatty(cls.tty)))
+        # if not os.isatty(cls.tty):
+        #     PlateManage.init = False
+        #     return
+        try:
+            cls.arduino = serial.Serial(port=cls.tty, baudrate=cls.baud_rate, timeout=1)
+        except SerialException:
+            return False
         PlateManage.init = True
 
     @classmethod

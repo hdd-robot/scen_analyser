@@ -1150,6 +1150,7 @@ Author: Halim Djerroud
                     <property name="margin-start">4</property>
                     <property name="margin-end">4</property>
                     <property name="margin-bottom">4</property>
+                    <signal name="clicked" handler="read_from_turntable" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
