@@ -1,6 +1,7 @@
 import pyrealsense2 as rs
 import numpy as np
 import cv2
+import shutil
 
 
 class ImageManager:
@@ -165,3 +166,8 @@ class ImageManager:
             return
         cv2.imwrite(path, self.image_spectro)
 
+    def save_current_graph_in_disk(self, tmp_name, new_name):
+        shutil.copyfile(tmp_name, new_name)
+
+    def save_current_spectro_in_disk(self, tmp_name, new_name):
+        shutil.copyfile(tmp_name, new_name)

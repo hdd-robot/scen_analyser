@@ -177,6 +177,8 @@ class Image(Base):
     img_pc_distance = Column(Integer())
     img_specto_data = Column(Text())
     img_specto_position = Column(Integer())
+    img_specto_spectr_rgb = Column(String(255))
+    img_specto_graph_rgb = Column(String(255))
     img_obj_id = Column(Integer(), ForeignKey("object.obj_id"))
     relationship("object")
 

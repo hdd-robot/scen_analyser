@@ -1,12 +1,21 @@
 import os
+import configparser
 
 class Params:
     def __init__(self):
-        self.base_path = os.path.expanduser('~') + "/labello/dataset/"
+        self.config = None
+        self.read_config_file()
+        self.base_path = self.config['GLOBAL']['base_path']
         self.image_path = self.base_path + "img/"
         self.point_cloud_path = self.base_path + "pcd/"
         self.spectro_path = self.base_path + "spectro/"
+        self.graph_path = self.base_path + "graph/"
         self.check_paths()
+
+
+    def read_config_file(self):
+        self.config = configparser.ConfigParser()
+        self.config.read('params.conf')
 
     def get_image_path(self):
         return self.image_path
@@ -16,6 +25,10 @@ class Params:
 
     def get_spectro_path(self):
         return self.spectro_path
+
+    def get_graph_path(self):
+        return self.graph_path
+
 
     def check_paths(self):
         if os.path.exists(self.base_path) is False:
@@ -29,3 +42,6 @@ class Params:
 
         if os.path.exists(self.spectro_path) is False:
             os.makedirs(self.spectro_path)
+
+        if os.path.exists(self.graph_path) is False:
+            os.makedirs(self.graph_path)

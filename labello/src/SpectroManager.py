@@ -3,31 +3,31 @@ import base64
 import socket
 import json
 
-IP = socket.gethostbyname(socket.gethostname())
 
-PORT = 5566
-ADDR = (IP, PORT)
-FORMAT = "utf-8"
-SIZE = 100000
-
-
-class ImageManager:
+class SpectroManager:
     def __init__(self):
-        pass
+        self.ip = socket.gethostbyname(socket.gethostname())
+        self.port = 5566
+        self.addr = (self.ip, self.port)
+        self.size = 100000
+        self.data_array = []
 
     def get_data(self):
-        """ Staring a TCP socket. """
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        """ Connecting to the server. """
-        client.connect(ADDR)
+        try:
+            """ Staring a TCP socket. """
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            """ Connecting to the server. """
+            client.connect(self.addr)
 
-        """ Sending the filename to the server. """
-        client.send("GET_DATA".encode(FORMAT))
+            """ Sending the filename to the server. """
+            client.send("GET_DATA".encode("utf-8"))
+        except:
+            return False
 
-        msg = client.recv(SIZE).decode(FORMAT)
+        msg = client.recv(self.size).decode("utf-8")
         recv_data = msg
         while (len(msg)):
-            msg = client.recv(SIZE).decode(FORMAT)
+            msg = client.recv(self.size).decode("utf-8")
             recv_data = recv_data + msg
 
         print(f"[SERVER]: {str(len(recv_data))} chars")
@@ -36,19 +36,33 @@ class ImageManager:
         json_obj = json.loads(recv_data)
         image_specter = json.dumps(json_obj['image_specter'])
 
-        with open("specter.png", "wb") as fh:
+        specter_file_name = "specter.png"
+        with open(specter_file_name, "wb") as fh:
             img = base64.b64decode(image_specter)
             fh.write(img)
 
         image_graphe = json.dumps(json_obj['image_graphe'])
 
-        with open("graph.png", "wb") as fh:
+        graph_file_name = "graph.png"
+        with open(graph_file_name, "wb") as fh:
             img = base64.b64decode(image_graphe)
             fh.write(img)
 
-        data_array = json.dumps(json_obj['data_array'])
-        print(data_array)
+        self.data_array = json.dumps(json_obj['data_array'])
         client.close()
+        return [self.data_array, specter_file_name, graph_file_name]
 
     def check_spectro_connected(self):
+        try:
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            """ Connecting to the server. """
+            client.connect(self.addr)
+        except ConnectionRefusedError:
+            print("Can't establish spectroscope connexion : IP " + self.ip + ' port ' + str(self.port))
+            return False
+        except:
+            return False
+
+        return True
+
         return False

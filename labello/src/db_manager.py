@@ -377,6 +377,17 @@ class db_manager:
         last_img_id = self.session.query(func.max(models.Image.img_id)).one()
         return last_img_id[0]
 
+    def get_image_by_id(self, img_id):
+        """
+        get data of image by ID
+        """
+        img_data = self.session.query(models.Image).filter(models.Image.img_id == img_id).one()
+
+        dico={}
+        dico['img_id'] = img_data.img_id
+        dico['img_specto_data'] = img_data.img_specto_data
+        return dico
+
 
     def add_new_image(self, img_properties):
         img_obj = models.Image()
@@ -431,4 +442,6 @@ class db_manager:
         img_obj.img_pc_distance = img_properties['img_pc_distance ']
         img_obj.img_specto_data = img_properties['img_specto_data']
         img_obj.img_specto_position = img_properties['img_specto_position']
+        img_obj.img_specto_spectr_rgb = img_properties['img_specto_spectr_rgb']
+        img_obj.img_specto_graph_rgb = img_properties['img_specto_graph_rgb']
         self.session.commit()

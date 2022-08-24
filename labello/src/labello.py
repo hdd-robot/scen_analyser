@@ -26,12 +26,13 @@ import os, sys
 from Scan_object import *
 from ImageManager import *
 from PlateManage import *
-
+from SpectroManager import *
 from matplotlib.backends.backend_gtk3agg import (
     FigureCanvasGTK3Agg as FigureCanvas)
 from matplotlib.figure import Figure
 import os.path
 
+import ast
 
 import cv2
 import numpy as np
@@ -54,7 +55,9 @@ class GUI:
         self.scan_object.init_to_last_object()
         self.selected_object_prop = self.scan_object.get_current_object_prop()
 
-
+        ### SPECTRO
+        self.spectro_manager = SpectroManager()
+        self.spectro_data = [0]
 
         ### CAMERA
         self.image_manager = ImageManager()
@@ -77,14 +80,21 @@ class GUI:
                 """
         provider.load_from_data(css)
 
+
+
         self.builder = Gtk.Builder()
         self.builder.add_from_file(UI_FILE)
         self.builder.connect_signals(self)
-        self.refresh_all_components()
+
+        self.check_devices(None)
+
         self.window = self.builder.get_object('Labello')
+
         self.window.maximize()
         self.window.show_all()
-        self.check_devices(None)
+
+        self.refresh_all_components()
+
 
 
 
@@ -100,7 +110,8 @@ class GUI:
         self.refresh_list_objects()
         self.upload_all_fildes()
         self.refresh_image_list()
-        self.draw_spectro()
+        self.window.show_all()
+
 
     def on_add_categorie(self, widget):
         dialog = self.builder.get_object('cetegorie_dialog_box')
@@ -510,9 +521,37 @@ class GUI:
         spect_image.set_from_pixbuf(pixbuf.copy())
 
     def save_current_image(self, btn):
+        data = {}
+        data['img_rgb_name'] = ""
+        data['img_rgb_type'] = ""
+        data['img_rgb_size'] = 0
+        data['img_rgb_file_size'] = 0
+        data['img_depth_name'] = ""
+        data['img_depth_size'] = 0
+        data['img_depth_type'] = ""
+        data['img_depth_file_size'] = 0
+        data['img_depth_intrinsec'] = ""
+        data['img_depth_extrinsec'] = ""
+        data['img_depth_turntable_deg'] = 0
+        data['img_depth_distance'] = ""
+        data['img_pc_name'] = ""
+        data['img_pc_size'] = ""
+        data['img_pc_type'] = ""
+        data['img_pc_file_size'] = ""
+        data['img_pc_intrinsec'] = ""
+        data['img_pc_extrinsec'] = ""
+        data['img_pc_turntable_deg'] = 0
+        data['img_pc_distance '] = 0
+        data['img_specto_data'] = ""
+        data['img_specto_position'] = 0
+        data['img_specto_data'] = "[]"
+        data['img_specto_spectr_rgb'] = ""
+        data['img_specto_graph_rgb'] = ""
+
         rgb_path = self.params.get_image_path()
         pcd_path = self.params.get_cloud_path()
         spectro_path = self.params.get_spectro_path()
+        graph_path = self.params.get_graph_path()
 
         if self.camera_status != 'OK':
             if self.image_manager.check_camera_is_connected() is False:
@@ -529,18 +568,49 @@ class GUI:
                     dialog.destroy()
                 return
 
-        data = self.scan_object.create_new_images("") # todo data
+        if self.spectro_status != 'OK':
+            if self.spectro_capture() is False:
+                print("No spectro ")
+                dialog = Gtk.MessageDialog(
+                    title="Error spectro",
+                    parent=self.window,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.CLOSE,
+                    text="No data to save ! ",
+                    modal=True)
+                response = dialog.run()
+                if response == Gtk.ResponseType.CLOSE:
+                    dialog.destroy()
+                return
+
+        data['img_specto_data'] = self.spectro_data[0]
+        data['img_specto_spectr_rgb'] = self.spectro_data[1]
+        data['img_specto_graph_rgb'] = self.spectro_data[2]
+
+
+        data = self.scan_object.create_new_images(data)
 
         rgb_path = rgb_path + data['img_rgb_name']
         pcd_path = pcd_path + data['img_depth_name']
-        #spectro_path = spectro_path + data['img_rgb_name']
+        spectro_rgb_path = spectro_path + data['img_specto_spectr_rgb']
+        graph_rgb_path = graph_path + data['img_specto_graph_rgb']
 
         self.image_manager.save_current_image_in_disk(rgb_path)
         self.image_manager.save_current_pcd_in_disk(pcd_path)
-        #self.image_manager.save_current_spectro_in_disk(spectro_path)
+        self.image_manager.save_current_spectro_in_disk(self.spectro_data[1], spectro_rgb_path)
+        self.image_manager.save_current_graph_in_disk(self.spectro_data[2], graph_rgb_path)
 
         self.refresh_image_list()
         pass
+
+
+    def spectro_capture(self, btn):
+        specter_data = self.spectro_manager.get_data()
+        if specter_data:
+            self.spectro_data = specter_data
+            self.draw_spectro()
+            return True
+        return False
 
     def show_clicked_image(self, tv, path, col):
         model = tv.get_model()
@@ -554,13 +624,21 @@ class GUI:
 
             rgb_path = self.params.get_image_path()
             pcd_path = self.params.get_cloud_path()
+            spectro_path = self.params.get_spectro_path()
+            graph_path = self.params.get_graph_path()
 
             rgb_image = self.builder.get_object('rgb_image')
             depth_image = self.builder.get_object('pc_image')
             spect_image = self.builder.get_object('spect_image')
+            graph_image = self.builder.get_object('graph_image')
 
-            rgb_file_path = rgb_path+ self.scan_object.current_image['img_rgb_name']
-            depth_file_path = pcd_path+ self.scan_object.current_image['img_depth_name']
+            rgb_file_path = rgb_path + self.scan_object.current_image['img_rgb_name']
+            depth_file_path = pcd_path + self.scan_object.current_image['img_depth_name']
+            spectro_file_path = spectro_path + self.scan_object.current_image['img_specto_spectr_rgb']
+            graph_file_path = graph_path + self.scan_object.current_image['img_specto_graph_rgb']
+
+            #load spectro data
+            self.spectro_data[0] = self.scan_object.current_image['img_specto_data']
 
             if os.path.exists(rgb_file_path):
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
@@ -570,27 +648,62 @@ class GUI:
                     preserve_aspect_ratio=True)
                 rgb_image.set_from_pixbuf(pixbuf.copy())
 
-        if os.path.exists(depth_file_path):
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                filename=depth_file_path,
-                width=400,
-                height=400,
-                preserve_aspect_ratio=True)
-            depth_image.set_from_pixbuf(pixbuf.copy())
+            if os.path.exists(depth_file_path):
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    filename=depth_file_path,
+                    width=400,
+                    height=400,
+                    preserve_aspect_ratio=True)
+                depth_image.set_from_pixbuf(pixbuf.copy())
 
+            if os.path.exists(spectro_file_path):
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    filename=spectro_file_path,
+                    width=400,
+                    height=400,
+                    preserve_aspect_ratio=True)
+                spect_image.set_from_pixbuf(pixbuf.copy())
+
+            if os.path.exists(graph_file_path):
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    filename=graph_file_path,
+                    width=400,
+                    height=400,
+                    preserve_aspect_ratio=True)
+                graph_image.set_from_pixbuf(pixbuf.copy())
+
+            self.draw_spectro()
 
 
     def draw_spectro(self):
         rgb_image = self.builder.get_object('specto_graph')
+
+        for e in rgb_image.get_children():
+            rgb_image.remove(e)
+
         fig = Figure(figsize=(5, 4), dpi=100)
-        ax = fig.add_subplot()
-        t = np.arange(0.0, 3.0, 0.01)
-        s = np.sin(2 * np.pi * t)
+        fig.clf()
+        ax = fig.add_subplot(111)
+
+        lst = ast.literal_eval(self.spectro_data[0])
+        lst = ast.literal_eval(lst)
+        s = [row[1] for row in lst]
+        t = [row[0] for row in lst]
         ax.plot(t, s)
+
         canvas = FigureCanvas(fig)  # a Gtk.DrawingArea
-        canvas.set_size_request(800, 400)
-        rgb_image.set_border_width(10)
         rgb_image.add(canvas)
+        canvas.set_size_request(800, 400)
+
+        canvas.draw()
+        canvas.show()
+
+        rgb_image.set_border_width(10)
+
+
+
+        self.refresh_all_components()
+
 
     def check_devices(self, btn):
         self.check_status()
@@ -600,7 +713,7 @@ class GUI:
 
         color_turntable = "green" if self.plate_status=='OK' else "red"
         color_camera = "green" if self.camera_status=='OK' else "red"
-        color_spectro = "green" if label_spectro=='OK' else "red"
+        color_spectro = "green" if self.spectro_status=='OK' else "red"
 
         label_turntable.set_markup("<span color='"+color_turntable+"'>Turntable: " + self.plate_status + "</span>")
         label_camera.set_markup("<span color='"+color_camera+"'>Camera: " + self.camera_status + "</span>")
@@ -621,8 +734,12 @@ class GUI:
         else:
             self.camera_status = "Not Respond"
 
-        # todo : add check spectro
-        self.spectro_status = "NONE"
+        if self.spectro_manager.check_spectro_connected():
+            self.spectro_status = "OK"
+        else:
+            self.spectro_status = "Not Respond"
+
+
 
     def read_from_turntable(self, btn):
         nb_shots_int = 0

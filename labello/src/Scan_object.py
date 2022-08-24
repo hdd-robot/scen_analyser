@@ -172,6 +172,7 @@ class Scan_object:
         rgb_img_name = "rgb_" + str(self.properties['obj_id']) + '_' + str(img_id) + ".jpg"
         depth_name = "depth_"  + str(self.properties['obj_id']) + '_' + str(img_id) + ".png"
         rgb_specrto_name = "spectro_" + str(self.properties['obj_id']) + '_' + str(img_id) + ".png"
+        rgb_graph_name = "graph_" + str(self.properties['obj_id']) + '_' + str(img_id) + ".png"
 
         self.current_image['img_rgb_name'] = rgb_img_name
         self.current_image['img_rgb_type'] = ""
@@ -193,8 +194,10 @@ class Scan_object:
         self.current_image['img_pc_extrinsec'] = ""
         self.current_image['img_pc_turntable_deg'] = 0
         self.current_image['img_pc_distance '] = 0
-        self.current_image['img_specto_data'] = ""
+        self.current_image['img_specto_data'] =  data["img_specto_data"]
         self.current_image['img_specto_position'] = 0
+        self.current_image['img_specto_spectr_rgb'] = rgb_specrto_name
+        self.current_image['img_specto_graph_rgb'] = rgb_graph_name
         self.db_manager.update_image(self.current_image)
         return self.current_image
 
@@ -204,7 +207,12 @@ class Scan_object:
         rgb_img_name = "rgb_" + str(obj_id) + '_' + str(img_id) + ".jpg"
         depth_name = "depth_"  + str(obj_id) + '_' + str(img_id) + ".png"
         rgb_specrto_name = "spectro_" + str(obj_id) + '_' + str(img_id) + ".png"
+        rgb_graph_name = "graph_" + str(self.properties['obj_id']) + '_' + str(img_id) + ".png"
 
+
+        data_img = self.db_manager.get_image_by_id(img_id)
+
+        print(data_img)
         self.current_image['img_rgb_name'] = rgb_img_name
         self.current_image['img_rgb_type'] = ""
         self.current_image['img_rgb_size'] = 0
@@ -225,6 +233,8 @@ class Scan_object:
         self.current_image['img_pc_extrinsec'] = ""
         self.current_image['img_pc_turntable_deg'] = 0
         self.current_image['img_pc_distance '] = 0
-        self.current_image['img_specto_data'] = ""
+        self.current_image['img_specto_data'] = data_img['img_specto_data']
         self.current_image['img_specto_position'] = 0
+        self.current_image['img_specto_spectr_rgb'] = rgb_specrto_name
+        self.current_image['img_specto_graph_rgb'] = rgb_graph_name
 
