@@ -65,7 +65,7 @@ class db_manager:
         return lst
 
     ############# SUBCATEGORIE #################################
-    def add_new_subcategorie(self, scat_name, scat_cat_name, scat_description=''):
+    def add_new_subcategorie(self, scat_cat_name, scat_name, scat_description=''):
         """ ADD SUBCATEGORIE """
         subCategorie_obj = models.SubCategorie()
         subCategorie_obj.scat_name = scat_name
@@ -227,7 +227,7 @@ class db_manager:
         return lst
 
     ############# OBJECT_NAME #################################
-    def add_new_objectName(self, obn_name, obn_scat_name, obn_description=''):
+    def add_new_objectName(self, obn_scat_name, obn_name , obn_description=''):
         """ ADD OBJECT_NAME """
         objectName_obj = models.ObjectName()
         objectName_obj.obn_name = obn_name

@@ -27,8 +27,12 @@ from Scan_object import *
 from ImageManager import *
 from PlateManage import *
 from SpectroManager import *
+
+
 from matplotlib.backends.backend_gtk3agg import (
     FigureCanvasGTK3Agg as FigureCanvas)
+
+
 from matplotlib.figure import Figure
 import os.path
 
@@ -116,11 +120,58 @@ class GUI:
     def on_add_categorie(self, widget):
         dialog = self.builder.get_object('cetegorie_dialog_box')
         response = dialog.run()
+
         if response == Gtk.ResponseType.OK:
+            diag_cat_name = self.builder.get_object('cetegorie_dialog_cat').get_text()
+            diag_cat_desc = self.builder.get_object('cetegorie_dialog_desc').get_text()
+            self.scan_object.add_categorie(diag_cat_name, diag_cat_desc)
+        elif response == Gtk.ResponseType.CANCEL:
+            print("CANCEL")
+
+        dialog.hide()
+        self.refresh_all_components()
+
+    def on_add_subcategorie(self, widget):
+        dialog = self.builder.get_object('sub_cetegorie_dialog_box')
+        response = dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            diag_scat_name = self.builder.get_object('subcetegorie_dialog_scat').get_text()
+            diag_scat_desc = self.builder.get_object('subcetegorie_dialog_desc').get_text()
+
+            obj_cmbx_cat_list_index = self.builder.get_object('cmbx_cat_list').get_active()
+            obj_cmbx_cat_list_model = self.builder.get_object('cmbx_cat_list').get_model()
+            iter = obj_cmbx_cat_list_model.get_iter(obj_cmbx_cat_list_index)
+            val_cat  = obj_cmbx_cat_list_model.get_value(iter, 0)
+            self.scan_object.add_sub_categorie(val_cat , diag_scat_name, diag_scat_desc)
+
             print("OK")
         elif response == Gtk.ResponseType.CANCEL:
             print("CANCEL")
-        dialog.destroy()
+        dialog.hide()
+        self.refresh_all_components()
+
+    def on_add_object_name(self, widget):
+        dialog = self.builder.get_object('objct_name_dialog_box')
+        response = dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            diag_obj_name = self.builder.get_object('objname_dialog_obj').get_text()
+            diag_obj_desc = self.builder.get_object('objname_dialog_desc').get_text()
+
+            obj_cmbx_scat_list_index = self.builder.get_object('cmbx_subcat_list').get_active()
+            obj_cmbx_scat_list_model = self.builder.get_object('cmbx_subcat_list').get_model()
+            iter = obj_cmbx_scat_list_model.get_iter(obj_cmbx_scat_list_index)
+            val_scat = obj_cmbx_scat_list_model.get_value(iter, 0)
+
+            self.scan_object.add_object_name(val_scat, diag_obj_name, diag_obj_desc)
+
+            print("OK")
+        elif response == Gtk.ResponseType.CANCEL:
+            print("CANCEL")
+        dialog.hide()
+        self.refresh_all_components()
+
 
     def refresh_cmbx_cat_list(self):
         lst = self.scan_object.get_list_categories()
@@ -700,10 +751,7 @@ class GUI:
 
         rgb_image.set_border_width(10)
 
-
-
         self.refresh_all_components()
-
 
     def check_devices(self, btn):
         self.check_status()

@@ -65,10 +65,22 @@ class Scan_object:
         lst = self.db_manager.get_list_material()
         return lst
 
-    def add_categorie(self, properties):
+    def add_categorie(self, cat_name, cat_description):
         """ add categories """
-        self.db_manager.add_new_categorie(properties);
+        self.db_manager.add_new_categorie(cat_name, cat_description);
         return
+
+    def add_sub_categorie(self, scat_name, scat_cat_name, scat_description=''):
+        """ add categories """
+        self.db_manager.add_new_subcategorie (scat_name, scat_cat_name, scat_description='')
+        return
+
+    def add_object_name(self, obn_scat_name, obn_name, obn_description=''):
+        """ add categories """
+        self.db_manager.add_new_objectName(obn_scat_name, obn_name, obn_description='')
+        return
+
+
 
     def get_list_categories(self):
         """ get list of colors """
@@ -212,7 +224,6 @@ class Scan_object:
 
         data_img = self.db_manager.get_image_by_id(img_id)
 
-        print(data_img)
         self.current_image['img_rgb_name'] = rgb_img_name
         self.current_image['img_rgb_type'] = ""
         self.current_image['img_rgb_size'] = 0
