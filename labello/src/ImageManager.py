@@ -139,14 +139,20 @@ class ImageManager:
         return resized_color_image, resized_depth_colormap_image
 
 
-    def get_next_pc_image(self):
-        pic = cv2.imread("cat.jpg")
+    # def get_next_pc_image(self):  ## to delete
+    #     pic = cv2.imread("cat.jpg")
+    #     pic = cv2.resize(pic, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_CUBIC)
+    #     pic = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
+    #     return pic
+
+    def get_next_specto_image(self):
+        pic = cv2.imread("specter.png")
         pic = cv2.resize(pic, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_CUBIC)
         pic = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
         return pic
 
-    def get_next_specto_image(self):
-        pic = cv2.imread("cat.jpg")
+    def get_next_graph_img_image(self):
+        pic = cv2.imread("graph.png")
         pic = cv2.resize(pic, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_CUBIC)
         pic = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
         return pic

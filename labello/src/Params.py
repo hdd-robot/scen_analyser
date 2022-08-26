@@ -12,6 +12,11 @@ class Params:
         self.graph_path = self.base_path + "graph/"
         self.check_paths()
 
+    def get_spectro_ip(self):
+        return self.config['SPECTRO']['ip']
+
+    def get_spectro_port(self):
+        return int(self.config['SPECTRO']['port'])
 
     def read_config_file(self):
         self.config = configparser.ConfigParser()

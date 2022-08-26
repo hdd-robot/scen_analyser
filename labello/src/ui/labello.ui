@@ -1443,7 +1443,7 @@ Author: Halim Djerroud
                 </child>
                 <child>
                   <object class="GtkButton">
-                    <property name="label" translatable="yes">Save current shot</property>
+                    <property name="label" translatable="yes">Save current</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -1462,7 +1462,7 @@ Author: Halim Djerroud
                 </child>
                 <child>
                   <object class="GtkButton">
-                    <property name="label" translatable="yes">Spectro capture</property>
+                    <property name="label" translatable="yes">Get Spectro data</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -1479,7 +1479,7 @@ Author: Halim Djerroud
                 </child>
                 <child>
                   <object class="GtkButton">
-                    <property name="label" translatable="yes">Start image capture</property>
+                    <property name="label" translatable="yes">Get RS image</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>

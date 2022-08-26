@@ -37,7 +37,7 @@ from matplotlib.figure import Figure
 import os.path
 
 import ast
-
+from Params import  *
 import cv2
 import numpy as np
 
@@ -49,7 +49,7 @@ UI_FILE = "ui/labello.ui"
 class GUI:
     def __init__(self):
 
-        self.params = Params()
+        self.parms = Params()
 
         self.camera_status  = "Unknow"
         self.plate_status   = "Unknow"
@@ -536,7 +536,7 @@ class GUI:
 
         rgb_image = self.builder.get_object('rgb_image')
         pc_image = self.builder.get_object('pc_image')
-        spect_image = self.builder.get_object('spect_image')
+
 
         ### SHOW RGB IMAGE
         rgb_img, pc_ima = self.image_manager.get_next_rgb_image()
@@ -550,7 +550,7 @@ class GUI:
         rgb_image.set_from_pixbuf(pixbuf.copy())
 
         ### SHOW PC IMAGE
-        #pc_ima = self.image_manager.get_next_pc_image()
+        #pc_ima = self.image_manager.get_next_pc_image()  ## To delete
         pixbuf = GdkPixbuf.Pixbuf.new_from_data(pc_ima.tobytes(),
                                                 GdkPixbuf.Colorspace.RGB,
                                                 False,
@@ -560,16 +560,7 @@ class GUI:
                                                 pc_ima.shape[2] * rgb_img.shape[1])
         pc_image.set_from_pixbuf(pixbuf.copy())
 
-        ### SHOW SPECTRO IMAGE
-        spect_img = self.image_manager.get_next_specto_image()
-        pixbuf = GdkPixbuf.Pixbuf.new_from_data(spect_img.tobytes(),
-                                                GdkPixbuf.Colorspace.RGB,
-                                                False,
-                                                8,
-                                                spect_img.shape[1],
-                                                spect_img.shape[0],
-                                                spect_img.shape[2] * rgb_img.shape[1])
-        spect_image.set_from_pixbuf(pixbuf.copy())
+
 
     def save_current_image(self, btn):
         data = {}
@@ -599,10 +590,10 @@ class GUI:
         data['img_specto_spectr_rgb'] = ""
         data['img_specto_graph_rgb'] = ""
 
-        rgb_path = self.params.get_image_path()
-        pcd_path = self.params.get_cloud_path()
-        spectro_path = self.params.get_spectro_path()
-        graph_path = self.params.get_graph_path()
+        rgb_path = self.parms.get_image_path()
+        pcd_path = self.parms.get_cloud_path()
+        spectro_path = self.parms.get_spectro_path()
+        graph_path = self.parms.get_graph_path()
 
         if self.camera_status != 'OK':
             if self.image_manager.check_camera_is_connected() is False:
@@ -620,7 +611,7 @@ class GUI:
                 return
 
         if self.spectro_status != 'OK':
-            if self.spectro_capture() is False:
+            if self.spectro_data != [0]:
                 print("No spectro ")
                 dialog = Gtk.MessageDialog(
                     title="Error spectro",
@@ -660,6 +651,32 @@ class GUI:
         if specter_data:
             self.spectro_data = specter_data
             self.draw_spectro()
+
+            ### SHOW SPECTRO IMAGE
+            spect_image = self.builder.get_object('spect_image')
+            spect_img = self.image_manager.get_next_specto_image()
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data = spect_img.tobytes(),
+                                                    colorspace = GdkPixbuf.Colorspace.RGB,
+                                                    has_alpha = False,
+                                                    bits_per_sample = 8,
+                                                    width = spect_img.shape[1],
+                                                    height = spect_img.shape[0],
+                                                    rowstride = spect_img.shape[2] * spect_img.shape[1])
+            spect_image.set_from_pixbuf(pixbuf.copy())
+
+            ### SHOW SPECTRO Graph
+            spect_image = self.builder.get_object('graph_image')
+            spect_img = self.image_manager.get_next_graph_img_image()
+
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data = spect_img.tobytes(),
+                                                    colorspace = GdkPixbuf.Colorspace.RGB,
+                                                    has_alpha = False,
+                                                    bits_per_sample = 8,
+                                                    width = spect_img.shape[1],
+                                                    height = spect_img.shape[0],
+                                                    rowstride = spect_img.shape[2] * spect_img.shape[1])
+            spect_image.set_from_pixbuf(pixbuf.copy())
+
             return True
         return False
 
@@ -673,10 +690,10 @@ class GUI:
 
             self.scan_object.load_image(id_object, id_image)
 
-            rgb_path = self.params.get_image_path()
-            pcd_path = self.params.get_cloud_path()
-            spectro_path = self.params.get_spectro_path()
-            graph_path = self.params.get_graph_path()
+            rgb_path = self.parms.get_image_path()
+            pcd_path = self.parms.get_cloud_path()
+            spectro_path = self.parms.get_spectro_path()
+            graph_path = self.parms.get_graph_path()
 
             rgb_image = self.builder.get_object('rgb_image')
             depth_image = self.builder.get_object('pc_image')
