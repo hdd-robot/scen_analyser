@@ -1,0 +1,141 @@
+digraph categories {
+	"Object" ->  "Papeterie";
+	"Object" ->  "Bureau" ;
+	"Object" ->  "Jouets" ;
+	"Object" ->  "Cuisine" ;
+	"Object" ->  "Mobilier";
+	"Object" ->  "Nourriture"
+	"Object" ->  "Electronique"
+  "Object" ->  "Linge"
+
+
+  "Linge" -> "Chaussette"
+  "Linge" -> "Bas"
+  "Linge" -> "Haut"
+  "Linge" -> "Chaussure"
+  "Linge" -> "Serviette"
+
+
+  "Chaussure" -> "Talons"
+  "Chaussure" -> "Basket"
+  "Chaussure" -> "Classique"
+
+  "Haut" -> "Tee-shirt"
+  "Haut" -> "Chemise"
+  "Haut" -> "Veste"
+
+
+  "Bas" -> "Pantalon"
+  "Bas" -> "Shorte"
+
+
+	"Electronique" -> "Téléphone"
+	"Electronique" -> "Télécommande"
+	"Electronique" -> "Ordinateur"
+
+
+  "Téléphone" -> "Téléphone fixe"
+  "Téléphone" -> "Téléphone portable"
+
+
+  "Ordinateur" -> "Laptop"
+  "Ordinateur" -> "Tablette"
+  "Ordinateur" -> "Ordinateur fixe"
+
+
+	"Papeterie" -> "Livre"
+	"Papeterie" -> "Cahier"
+
+	"Cahier" -> "Bloc note"
+  "Cahier" -> "Bloc Cahier scolaire"
+
+  "Livre" -> "Livre poche"
+  "Livre" -> "Livre broché"
+
+
+	"Bureau" -> "Stylos"
+	"Bureau" -> "Règle"
+	"Bureau" -> "Outil de bureau"
+
+  "Règle" -> "Règle plate"
+  "Règle" -> "Rapporteur"
+  "Règle" -> "Équerre"
+  "Règle" -> "Compas"
+
+  "Outil de bureau" -> "Agrafeuse"
+  "Outil de bureau" -> "Ciseaux"
+  "Outil de bureau" -> "Colle"
+
+
+	"Jouets" -> "Jouets Enfant"
+	"Jouets" -> "Console de jeu"
+
+
+	"Cuisine"  -> "Ustensile de cuisine"
+	"Cuisine"  -> "Vaisselle"
+
+	"Vaisselle" -> "Assiette"
+	"Vaisselle" -> "Verre"
+	"Vaisselle" -> "Tasse"
+	"Vaisselle" -> "Bol"
+
+	"Ustensile de cuisine" -> "Cuillère"
+	"Ustensile de cuisine" -> "Fourchette"
+	"Ustensile de cuisine" -> "Couteau"
+
+
+	"Nourriture" -> "Fruit"
+	"Nourriture" -> "Légumes"
+	"Nourriture" -> "Biscuit"
+
+
+	"Légumes" -> "aubergine"
+	"Légumes" -> "tomate"
+	"Légumes" -> "pomme de terre"
+	"Légumes" -> "poivron"
+	"Légumes" -> "ail"
+	"Légumes" -> "oignons"
+	"Légumes" -> "concombre"
+	"Légumes" -> "courgette"
+	"Légumes" -> "Carotte" 
+
+
+	"Fruit" -> "Orange"
+	"Fruit" -> "Citron"
+	"Fruit" -> "Prune"
+	"Fruit" -> "Pêche"
+	"Fruit" -> "Pomme"
+	"Fruit" -> "Poire"
+
+
+	"Mobilier" -> "Table"
+	"Mobilier" -> "Chaises"
+	"Mobilier" -> "Canapé"
+  "Mobilier" -> "Armoire"
+  "Mobilier" -> "Décoration"
+
+  "Table" -> "Table cuisine"
+  "Table" -> "Table Bureau"
+  "Table" -> "Table Salon"
+  
+
+  "Décoration" -> "Vase"
+  "Décoration" -> "Cadre"
+
+  "Stylos" -> "Bic"
+	"Stylos" -> "Feutres"
+	"Stylos" -> "Marqueurs"
+  "Stylos" -> "Crayon"
+
+
+	"Jouets Enfant" -> "Poupée"
+	"Jouets Enfant" -> "Train"
+	"Jouets Enfant" -> "Tasses"
+
+
+	"Console de jeu" -> "Console"
+	"Console de jeu" -> "Manette"
+
+
+
+}
