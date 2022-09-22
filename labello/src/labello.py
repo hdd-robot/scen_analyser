@@ -841,9 +841,27 @@ class GUI:
             print("error Plafe  status ")
             return
 
+        if (self.spectro_status != 'OK' ):
+            dialog = Gtk.MessageDialog(
+                title="Error spectro",
+                parent=self.window,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.CLOSE,
+                text="Spectro not respond ! The shots will not include spectro data",
+                modal=True)
+            response = dialog.run()
+            if response == Gtk.ResponseType.CLOSE:
+                dialog.destroy()
+            return
+
+
         steps =  200 / nb_shots_int
         for i in range (nb_shots_int):
             self.start_image_captur(None)
+
+            if self.spectro_status == 'OK':
+                self.spectro_capture(None)
+
             time.sleep(0.1)
             self.save_current_image(None)
             self.refresh_all_components()

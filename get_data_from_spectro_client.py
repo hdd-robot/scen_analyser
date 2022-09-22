@@ -3,6 +3,7 @@
 import socket
 
 IP = socket.gethostbyname(socket.gethostname())
+IP = "192.168.1.58"
 
 PORT = 5566
 ADDR = (IP, PORT)
