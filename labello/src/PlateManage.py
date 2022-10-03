@@ -5,11 +5,11 @@ import os.path
 from serial import SerialException
 
 """
-Arduino communication 
-I : init 
+Arduino communication
+I : init
 C : check
 R-steps- :
-D <- : Done  
+D <- : Done
 """
 class PlateManage:
 

@@ -2,6 +2,7 @@ import os
 import configparser
 
 class Params:
+    """ Params  """
     def __init__(self):
         self.config = None
         self.read_config_file()

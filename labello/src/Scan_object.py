@@ -186,6 +186,7 @@ class Scan_object:
         rgb_specrto_name = "spectro_" + str(self.properties['obj_id']) + '_' + str(img_id) + ".png"
         rgb_graph_name = "graph_" + str(self.properties['obj_id']) + '_' + str(img_id) + ".png"
 
+
         self.current_image['img_rgb_name'] = rgb_img_name
         self.current_image['img_rgb_type'] = ""
         self.current_image['img_rgb_size'] = 0
@@ -194,16 +195,16 @@ class Scan_object:
         self.current_image['img_depth_size'] = 0
         self.current_image['img_depth_type'] = ""
         self.current_image['img_depth_file_size'] = 0
-        self.current_image['img_depth_intrinsec'] = ""
-        self.current_image['img_depth_extrinsec'] = ""
+        self.current_image['img_depth_intrinsec'] = data['img_depth_intrinsec']
+        self.current_image['img_depth_extrinsec'] = data['img_depth_extrinsec']
         self.current_image['img_depth_turntable_deg'] = 0
         self.current_image['img_depth_distance'] = ""
         self.current_image['img_pc_name'] = ""
         self.current_image['img_pc_size'] = ""
         self.current_image['img_pc_type'] = ""
         self.current_image['img_pc_file_size'] = ""
-        self.current_image['img_pc_intrinsec'] = ""
-        self.current_image['img_pc_extrinsec'] = ""
+        self.current_image['img_pc_intrinsec'] = data['img_pc_intrinsec']
+        self.current_image['img_pc_extrinsec'] = data['img_pc_extrinsec']
         self.current_image['img_pc_turntable_deg'] = 0
         self.current_image['img_pc_distance '] = 0
         self.current_image['img_specto_data'] =  data["img_specto_data"]
@@ -248,4 +249,6 @@ class Scan_object:
         self.current_image['img_specto_position'] = 0
         self.current_image['img_specto_spectr_rgb'] = rgb_specrto_name
         self.current_image['img_specto_graph_rgb'] = rgb_graph_name
+
+
 

@@ -1,12 +1,10 @@
 import pyrealsense2 as rs
 import numpy as np
 import cv2
+import open3d as o3d
+
 
 try:
-
-
-
-
     # Create a context object. This object owns the handles to all connected realsense devices
     pipeline = rs.pipeline()
     config = rs.config()
@@ -16,7 +14,12 @@ try:
     pipeline_profile = config.resolve(pipeline_wrapper)
     device = pipeline_profile.get_device()
     device_product_line = str(device.get_info(rs.camera_info.product_line))
-
+    print("Config ---- ")
+    intr = pipeline_profile.get_stream(rs.stream.color).as_video_stream_profile().get_intrinsics()
+    extr = pipeline_profile.get_stream(rs.stream.color).as_video_stream_profile()
+    print(intr)
+    print(intr)
+    print("Config ---- ")
     found_rgb = False
     for s in device.sensors:
         if s.get_info(rs.camera_info.name) == 'RGB Camera':
@@ -34,13 +37,21 @@ try:
         config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
     pipeline.start(config)
 
+    print(config)
+
+
     while True:
         # This call waits until a new coherent set of frames is available on a device
         # Calls to get_frame_data(...) and get_frame_timestamp(...) on a device will return stable values until wait_for_frames(...) is called
         frames = pipeline.wait_for_frames()
         depth_frame = frames.get_depth_frame()
         color_frame = frames.get_color_frame()
-
+        depth_intrin = depth_frame.profile.as_video_stream_profile().intrinsics
+        color_intrin = color_frame.profile.as_video_stream_profile().intrinsics
+        depth_to_color_extrin = depth_frame.profile.get_extrinsics_to(color_frame.profile)
+        print(depth_intrin)
+        print(color_intrin)
+        print(depth_to_color_extrin)
 
         if not depth_frame or not color_frame:
             continue

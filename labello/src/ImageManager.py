@@ -5,8 +5,13 @@ import shutil
 
 
 class ImageManager:
+    """
+    ImageManager class
+    Mange camera
+    """
     def __init__(self):
         self.list_camera = []
+        self.camera_params = {}
         self.camera_connected = False
         self.check_camera_is_connected()
         self.pipeline = None
@@ -18,15 +23,14 @@ class ImageManager:
         self.color_image = None
         self.depth_colormap = None
         self.dist_from_object = 0
-
+        self.camera_params = {}
         self.image_rgb = None
         self.image_pcd = None
         self.image_spectro = None
-
         self.init_camera()
 
     def get_data_of_current_image(self):
-        img_data = []
+        img_data = {}
         img_data['img_rgb_type'] = ""
         img_data['img_rgb_size'] = 0
         img_data['img_rgb_file_size'] = 0
@@ -82,7 +86,7 @@ class ImageManager:
                 found_rgb = True
                 break
         if not found_rgb:
-            print("The demo requires Depth camera with Color sensor")
+            print("Requires Depth camera with Color sensor")
             exit(0)
 
         self.config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
@@ -92,13 +96,31 @@ class ImageManager:
         else:
             self.config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
         self.pipeline.start(self.config)
+        self.get_camera_parameters()
 
 
-    def get_next_rgb_image(self):
+
+    def get_camera_parameters(self):
         frames = self.pipeline.wait_for_frames()
         depth_frame = frames.get_depth_frame()
         color_frame = frames.get_color_frame()
+        if not depth_frame or not color_frame:
+            return {}
+        depth_intrin = depth_frame.profile.as_video_stream_profile().intrinsics
+        color_intrin = color_frame.profile.as_video_stream_profile().intrinsics
+        depth_to_color_extrin = depth_frame.profile.get_extrinsics_to(color_frame.profile)
+        self.camera_params["depth_intrin"] = depth_intrin
+        self.camera_params["color_intrin"] = color_intrin
+        self.camera_params["depth_to_color_extrin"] = depth_to_color_extrin
+        return self.camera_params
 
+
+
+    def get_next_rgb_image(self):
+        """ get_next_rgb_image """
+        frames = self.pipeline.wait_for_frames()
+        depth_frame = frames.get_depth_frame()
+        color_frame = frames.get_color_frame()
         if not depth_frame or not color_frame:
             return
         width = depth_frame.get_width()
@@ -172,8 +194,8 @@ class ImageManager:
             return
         cv2.imwrite(path, self.image_spectro)
 
-    def save_current_graph_in_disk(self, tmp_name, new_name):
+    def save_current_spectro_in_disk(self, tmp_name, new_name):
         shutil.copyfile(tmp_name, new_name)
 
-    def save_current_spectro_in_disk(self, tmp_name, new_name):
+    def save_current_graph_in_disk(self, tmp_name, new_name):
         shutil.copyfile(tmp_name, new_name)

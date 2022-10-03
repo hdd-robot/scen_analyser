@@ -20,6 +20,6 @@ def graph_draw(graph):
     matplotlib.pyplot.show()
 
 
-computer = wn.synset('eating_utensil.n.01')
+computer = wn.synset('book.n.02')
 graph = hyponym_graph(computer)
 graph_draw(graph)

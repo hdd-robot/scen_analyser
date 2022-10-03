@@ -46,14 +46,14 @@ digraph categories {
   "Ordinateur" -> "Ordinateur fixe"
 
 
-	"Papeterie" -> "Livre"
+	"Papeterie" -> "Book"
 	"Papeterie" -> "Cahier"
 
 	"Cahier" -> "Bloc note"
   "Cahier" -> "Bloc Cahier scolaire"
 
-  "Livre" -> "Livre poche"
-  "Livre" -> "Livre broché"
+  "Book" -> "Book poche"
+  "Book" -> "Book broché"
 
 
 	"Bureau" -> "Stylos"

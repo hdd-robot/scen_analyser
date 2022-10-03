@@ -1,8 +1,7 @@
 #!/usr/bin/python3
-# -*- Mode: Python; coding: utf-8; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*-
 #
 # main.py
-# Copyright (C) 2022 Halim Djerroud <hdd@ai.univ-paris8.fr>
+# Copyright (C) 2022 Halim Djerroud <hdd@halim.info>
 #
 # imcloudlab is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -37,7 +36,7 @@ from matplotlib.figure import Figure
 import os.path
 
 import ast
-from Params import  *
+from Params import *
 import cv2
 import numpy as np
 
@@ -89,14 +88,10 @@ class GUI:
         self.builder = Gtk.Builder()
         self.builder.add_from_file(UI_FILE)
         self.builder.connect_signals(self)
-
         self.check_devices(None)
-
         self.window = self.builder.get_object('Labello')
-
         self.window.maximize()
         self.window.show_all()
-
         self.refresh_all_components()
 
 
@@ -142,7 +137,7 @@ class GUI:
             obj_cmbx_cat_list_index = self.builder.get_object('cmbx_cat_list').get_active()
             obj_cmbx_cat_list_model = self.builder.get_object('cmbx_cat_list').get_model()
             iter = obj_cmbx_cat_list_model.get_iter(obj_cmbx_cat_list_index)
-            val_cat  = obj_cmbx_cat_list_model.get_value(iter, 0)
+            val_cat      = obj_cmbx_cat_list_model.get_value(iter, 0)
             self.scan_object.add_sub_categorie(val_cat , diag_scat_name, diag_scat_desc)
 
             print("OK")
@@ -611,23 +606,32 @@ class GUI:
                 return
 
         if self.spectro_status != 'OK':
-            if self.spectro_data != [0]:
-                print("No spectro ")
+            if self.spectro_data == [0]:
                 dialog = Gtk.MessageDialog(
                     title="Error spectro",
                     parent=self.window,
                     message_type=Gtk.MessageType.ERROR,
                     buttons=Gtk.ButtonsType.CLOSE,
-                    text="No data to save ! ",
+                    text="No spectrometer data data to save ! ",
                     modal=True)
                 response = dialog.run()
                 if response == Gtk.ResponseType.CLOSE:
                     dialog.destroy()
-                return
 
-        data['img_specto_data'] = self.spectro_data[0]
-        data['img_specto_spectr_rgb'] = self.spectro_data[1]
-        data['img_specto_graph_rgb'] = self.spectro_data[2]
+
+        if self.spectro_data != [0]:
+            data['img_specto_data'] = self.spectro_data[0]
+            data['img_specto_spectr_rgb'] = self.spectro_data[1]
+            data['img_specto_graph_rgb'] = self.spectro_data[2]
+
+
+
+        camera_params_json = str(self.image_manager.camera_params)
+        print(camera_params_json)
+        data['img_depth_intrinsec'] = camera_params_json
+        data['img_depth_extrinsec'] = camera_params_json
+        data['img_pc_intrinsec'] = camera_params_json
+        data['img_pc_extrinsec'] = camera_params_json
 
 
         data = self.scan_object.create_new_images(data)
@@ -639,8 +643,10 @@ class GUI:
 
         self.image_manager.save_current_image_in_disk(rgb_path)
         self.image_manager.save_current_pcd_in_disk(pcd_path)
-        self.image_manager.save_current_spectro_in_disk(self.spectro_data[1], spectro_rgb_path)
-        self.image_manager.save_current_graph_in_disk(self.spectro_data[2], graph_rgb_path)
+
+        if self.spectro_data != [0]:
+            self.image_manager.save_current_spectro_in_disk(self.spectro_data[1], spectro_rgb_path)
+            self.image_manager.save_current_graph_in_disk(self.spectro_data[2], graph_rgb_path)
 
         self.refresh_image_list()
         pass
@@ -817,7 +823,7 @@ class GUI:
                 parent=self.window,
                 message_type=Gtk.MessageType.ERROR,
                 buttons=Gtk.ButtonsType.CLOSE,
-                text="Shots mast be integer  ! ",
+                text="Shots mast be integer      ! ",
                 modal=True)
             response = dialog.run()
             if response == Gtk.ResponseType.CLOSE:
@@ -854,18 +860,15 @@ class GUI:
                 dialog.destroy()
             return
 
-
-        steps =  200 / nb_shots_int
+        steps =      200 / nb_shots_int
         for i in range (nb_shots_int):
             self.start_image_captur(None)
 
             if self.spectro_status == 'OK':
                 self.spectro_capture(None)
-
             time.sleep(0.1)
             self.save_current_image(None)
             self.refresh_all_components()
-
             PlateManage.move_plate_steps(steps)
             time.sleep(2)
 

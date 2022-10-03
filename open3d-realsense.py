@@ -1,5 +1,3 @@
-
-
 import matplotlib.pyplot as plt
 import open3d as o3d
 import numpy as np
@@ -23,7 +21,7 @@ rs.start_capture(True)  # true: start recording with capture
 
 #o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault
 
-pinholeCamera = o3d.io.read_pinhole_camera_intrinsic('camera_primesense.json')
+spinholeCamera = o3d.io.read_pinhole_camera_intrinsic('camera_primesense.json')
 
 
 for fid in range(150):
