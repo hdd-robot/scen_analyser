@@ -36,7 +36,7 @@ from matplotlib.figure import Figure
 import os.path
 
 import ast
-from Params import *
+from Params import  *
 import cv2
 import numpy as np
 

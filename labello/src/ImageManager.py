@@ -9,6 +9,7 @@ class ImageManager:
     ImageManager class
     Mange camera
     """
+
     def __init__(self):
         self.list_camera = []
         self.camera_params = {}
@@ -97,6 +98,7 @@ class ImageManager:
             self.config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
         self.pipeline.start(self.config)
         self.get_camera_parameters()
+        self.pipeline.stop()
 
 
 
@@ -117,6 +119,7 @@ class ImageManager:
 
 
     def get_next_rgb_image(self):
+        self.pipeline.start(self.config)
         """ get_next_rgb_image """
         frames = self.pipeline.wait_for_frames()
         depth_frame = frames.get_depth_frame()
@@ -158,6 +161,7 @@ class ImageManager:
                                          dsize=(int(depth_colormap_dim[1]/2), int(depth_colormap_dim[0]/2)),
                                          interpolation=cv2.INTER_AREA)
 
+        self.pipeline.stop()
         return resized_color_image, resized_depth_colormap_image
 
 

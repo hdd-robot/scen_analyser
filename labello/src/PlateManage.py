@@ -1,6 +1,6 @@
 import serial
 import time
-import os.path
+
 
 from serial import SerialException
 

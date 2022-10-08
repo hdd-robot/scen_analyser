@@ -1,6 +1,7 @@
 import os
 import configparser
 
+
 class Params:
     """ Params  """
     def __init__(self):
@@ -34,7 +35,6 @@ class Params:
 
     def get_graph_path(self):
         return self.graph_path
-
 
     def check_paths(self):
         if os.path.exists(self.base_path) is False:
