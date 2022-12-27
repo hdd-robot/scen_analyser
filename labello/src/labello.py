@@ -26,7 +26,7 @@ from Scan_object import *
 from ImageManager import *
 from PlateManage import *
 from SpectroManager import *
-
+import open3d  as o3d
 
 from matplotlib.backends.backend_gtk3agg import (
     FigureCanvasGTK3Agg as FigureCanvas)
@@ -811,7 +811,6 @@ class GUI:
             self.spectro_status = "Not Respond"
 
 
-
     def read_from_turntable(self, btn):
         nb_shots_int = 0
         nb_shots = self.builder.get_object('nb_shots').get_text()
@@ -871,6 +870,21 @@ class GUI:
             self.refresh_all_components()
             PlateManage.move_plate_steps(steps)
             time.sleep(2)
+
+    def export_ply_clicked(self, btn):
+        rgb_path = self.parms.get_image_path()
+        pcd_path = self.parms.get_cloud_path()
+        rgb_file_path = rgb_path + self.scan_object.current_image['img_rgb_name']
+        depth_file_path = pcd_path + self.scan_object.current_image['img_depth_name']
+        color_raw = o3d.io.read_image(rgb_file_path)
+        depth_raw = o3d.io.read_image(depth_file_path)
+        rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(color_raw, depth_raw)
+        # todo: load from saved intersec
+        camera_intrinsic = o3d.camera.PinholeCameraIntrinsic(o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault)
+        pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, camera_intrinsic)
+        pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
+        o3d.io.write_point_cloud("out.ply", pcd)
+        o3d.io.write_point_cloud("out.pcd", pcd)
 
 
 def main():
