@@ -28,6 +28,8 @@ for fid in range(150):
     im_rgbd = rs.capture_frame(True, True)  # wait for frames and align them
     # process im_rgbd.depth and im_rgbd.color
     print(type(im_rgbd))
+    # open3d.cuda.pybind.t.geometry.PointCloud
+
 
     #pcd = o3d.t.geometry.PointCloud.create_from_rgbd_image(im_rgbd, pinholeCamera)
 

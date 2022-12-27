@@ -546,13 +546,13 @@ class GUI:
 
         ### SHOW PC IMAGE
         #pc_ima = self.image_manager.get_next_pc_image()  ## To delete
-        pixbuf = GdkPixbuf.Pixbuf.new_from_data(pc_ima.tobytes(),
+        pixbuf = GdkPixbuf.Pixbuf.new_from_data(rgb_img.tobytes(),
                                                 GdkPixbuf.Colorspace.RGB,
                                                 False,
                                                 8,
-                                                pc_ima.shape[1],
-                                                pc_ima.shape[0],
-                                                pc_ima.shape[2] * rgb_img.shape[1])
+                                                rgb_img.shape[1],
+                                                rgb_img.shape[0],
+                                                rgb_img.shape[2] * rgb_img.shape[1])
         pc_image.set_from_pixbuf(pixbuf.copy())
 
 
@@ -627,7 +627,7 @@ class GUI:
 
 
         camera_params_json = str(self.image_manager.camera_params)
-        print(camera_params_json)
+        #print(camera_params_json)
         data['img_depth_intrinsec'] = camera_params_json
         data['img_depth_extrinsec'] = camera_params_json
         data['img_pc_intrinsec'] = camera_params_json

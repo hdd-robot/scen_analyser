@@ -116,53 +116,103 @@ class ImageManager:
         self.camera_params["depth_to_color_extrin"] = depth_to_color_extrin
         return self.camera_params
 
-
-
     def get_next_rgb_image(self):
-        self.pipeline.start(self.config)
-        """ get_next_rgb_image """
-        frames = self.pipeline.wait_for_frames()
-        depth_frame = frames.get_depth_frame()
-        color_frame = frames.get_color_frame()
-        if not depth_frame or not color_frame:
-            return
-        width = depth_frame.get_width()
-        height = depth_frame.get_height()
-        self.dist_from_object = depth_frame.get_distance(int(width / 2), int(height / 2))
 
-        # Convert images to numpy arrays
+        self.config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
+        self.config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 
-        for i in range (10):
-            depth_image = np.asanyarray(depth_frame.get_data())
+        profile = self.pipeline.start(self.config)
+
+        depth_sensor = profile.get_device().first_depth_sensor()
+        depth_sensor.set_option(
+            rs.option.visual_preset, 3
+        )  # Set high accuracy for depth sensor
+        depth_scale = depth_sensor.get_depth_scale()
+
+        clipping_distance_in_meters = 1
+        clipping_distance = clipping_distance_in_meters / depth_scale
+
+        align_to = rs.stream.color
+        align = rs.align(align_to)
+
+        try:
+            frames = self.pipeline.wait_for_frames()
+            aligned_frames = align.process(frames)
+            aligned_depth_frame = aligned_frames.get_depth_frame()
+            color_frame = aligned_frames.get_color_frame()
+
+            if not color_frame:
+                raise RuntimeError("Could not acquire color frames.")
+
+            if not aligned_depth_frame:
+                raise RuntimeError("Could not acquire depth frames.")
+
+            depth_image = np.asanyarray(aligned_depth_frame.get_data())
             color_image = np.asanyarray(color_frame.get_data())
 
-        # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
-        depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+            grey_color = 153
+            depth_image_3d = np.dstack(
+                (depth_image, depth_image, depth_image)
+            )  # Depth image is 1 channel, color is 3 channels
+            bg_removed = np.where(
+                (depth_image_3d > clipping_distance) | (depth_image_3d <= 0),
+                grey_color,
+                color_image,
+            )
 
-        depth_colormap_dim = depth_colormap.shape
-        color_colormap_dim = color_image.shape
-
-        # # If depth and color resolutions are different, resize color image to match depth image for display
-        # if depth_colormap_dim != color_colormap_dim:
-        #     resized_color_image = cv2.resize(color_image, dsize=(depth_colormap_dim[1], depth_colormap_dim[0]),
-        #                                      interpolation=cv2.INTER_AREA)
-        #     images = np.hstack((resized_color_image, depth_colormap))
-        # else:
-        #     images = np.hstack((color_image, depth_colormap))
-
+            color_image = color_image[..., ::-1]
+        finally:
+            self.pipeline.stop()
         self.image_rgb = color_image
-        self.image_pcd = depth_colormap
+        self.image_pcd = depth_image
+        return color_image, depth_image
 
-        resized_color_image = cv2.resize(color_image,
-                                         dsize=(int(depth_colormap_dim[1]/2), int(depth_colormap_dim[0]/2)),
-                                         interpolation=cv2.INTER_AREA)
-
-        resized_depth_colormap_image = cv2.resize(depth_colormap,
-                                         dsize=(int(depth_colormap_dim[1]/2), int(depth_colormap_dim[0]/2)),
-                                         interpolation=cv2.INTER_AREA)
-
-        self.pipeline.stop()
-        return resized_color_image, resized_depth_colormap_image
+    #
+    # def get_next_rgb_image(self):
+    #     self.pipeline.start(self.config)
+    #     """ get_next_rgb_image """
+    #     frames = self.pipeline.wait_for_frames()
+    #     depth_frame = frames.get_depth_frame()
+    #     color_frame = frames.get_color_frame()
+    #     if not depth_frame or not color_frame:
+    #         return
+    #     width = depth_frame.get_width()
+    #     height = depth_frame.get_height()
+    #     self.dist_from_object = depth_frame.get_distance(int(width / 2), int(height / 2))
+    #
+    #     # Convert images to numpy arrays
+    #
+    #     for i in range (10):
+    #         depth_image = np.asanyarray(depth_frame.get_data())
+    #         color_image = np.asanyarray(color_frame.get_data())
+    #
+    #     # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
+    #     depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.5), cv2.COLORMAP_JET)
+    #
+    #     depth_colormap_dim = depth_colormap.shape
+    #     color_colormap_dim = color_image.shape
+    #
+    #     # # If depth and color resolutions are different, resize color image to match depth image for display
+    #     # if depth_colormap_dim != color_colormap_dim:
+    #     #     resized_color_image = cv2.resize(color_image, dsize=(depth_colormap_dim[1], depth_colormap_dim[0]),
+    #     #                                      interpolation=cv2.INTER_AREA)
+    #     #     images = np.hstack((resized_color_image, depth_colormap))
+    #     # else:
+    #     #     images = np.hstack((color_image, depth_colormap))
+    #
+    #     self.image_rgb = color_image
+    #     self.image_pcd = depth_colormap
+    #
+    #     resized_color_image = cv2.resize(color_image,
+    #                                      dsize=(int(depth_colormap_dim[1]/2), int(depth_colormap_dim[0]/2)),
+    #                                      interpolation=cv2.INTER_AREA)
+    #
+    #     resized_depth_colormap_image = cv2.resize(depth_colormap,
+    #                                      dsize=(int(depth_colormap_dim[1]/2), int(depth_colormap_dim[0]/2)),
+    #                                      interpolation=cv2.INTER_AREA)
+    #
+    #     self.pipeline.stop()
+    #     return resized_color_image, resized_depth_colormap_image
 
 
     # def get_next_pc_image(self):  ## to delete
