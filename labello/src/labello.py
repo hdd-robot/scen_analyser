@@ -878,7 +878,7 @@ class GUI:
         depth_file_path = pcd_path + self.scan_object.current_image['img_depth_name']
         color_raw = o3d.io.read_image(rgb_file_path)
         depth_raw = o3d.io.read_image(depth_file_path)
-        rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(color_raw, depth_raw)
+        rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(color_raw, depth_raw , convert_rgb_to_intensity=False )
         # todo: load from saved intersec
         camera_intrinsic = o3d.camera.PinholeCameraIntrinsic(o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault)
         pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, camera_intrinsic)
