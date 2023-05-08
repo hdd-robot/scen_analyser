@@ -605,24 +605,24 @@ class GUI:
                     dialog.destroy()
                 return
 
-        if self.spectro_status != 'OK':
-            if self.spectro_data == [0]:
-                dialog = Gtk.MessageDialog(
-                    title="Error spectro",
-                    parent=self.window,
-                    message_type=Gtk.MessageType.ERROR,
-                    buttons=Gtk.ButtonsType.CLOSE,
-                    text="No spectrometer data data to save ! ",
-                    modal=True)
-                response = dialog.run()
-                if response == Gtk.ResponseType.CLOSE:
-                    dialog.destroy()
+        # if self.spectro_status != 'OK':
+        #     if self.spectro_data == [0]:
+        #         dialog = Gtk.MessageDialog(
+        #             title="Error spectro",
+        #             parent=self.window,
+        #             message_type=Gtk.MessageType.ERROR,
+        #             buttons=Gtk.ButtonsType.CLOSE,
+        #             text="No spectrometer data data to save ! ",
+        #             modal=True)
+        #         response = dialog.run()
+        #         if response == Gtk.ResponseType.CLOSE:
+        #             dialog.destroy()
 
 
-        if self.spectro_data != [0]:
-            data['img_specto_data'] = self.spectro_data[0]
-            data['img_specto_spectr_rgb'] = self.spectro_data[1]
-            data['img_specto_graph_rgb'] = self.spectro_data[2]
+        # if self.spectro_data != [0]:
+        #     data['img_specto_data'] = self.spectro_data[0]
+        #     data['img_specto_spectr_rgb'] = self.spectro_data[1]
+        #     data['img_specto_graph_rgb'] = self.spectro_data[2]
 
 
 
@@ -638,15 +638,15 @@ class GUI:
 
         rgb_path = rgb_path + data['img_rgb_name']
         pcd_path = pcd_path + data['img_depth_name']
-        spectro_rgb_path = spectro_path + data['img_specto_spectr_rgb']
-        graph_rgb_path = graph_path + data['img_specto_graph_rgb']
+        # spectro_rgb_path = spectro_path + data['img_specto_spectr_rgb']
+        # graph_rgb_path = graph_path + data['img_specto_graph_rgb']
 
         self.image_manager.save_current_image_in_disk(rgb_path)
         self.image_manager.save_current_pcd_in_disk(pcd_path)
 
-        if self.spectro_data != [0]:
-            self.image_manager.save_current_spectro_in_disk(self.spectro_data[1], spectro_rgb_path)
-            self.image_manager.save_current_graph_in_disk(self.spectro_data[2], graph_rgb_path)
+        # if self.spectro_data != [0]:
+        #     self.image_manager.save_current_spectro_in_disk(self.spectro_data[1], spectro_rgb_path)
+        #     self.image_manager.save_current_graph_in_disk(self.spectro_data[2], graph_rgb_path)
 
         self.refresh_image_list()
         pass
@@ -846,25 +846,26 @@ class GUI:
             print("error Plafe  status ")
             return
 
-        if (self.spectro_status != 'OK' ):
-            dialog = Gtk.MessageDialog(
-                title="Error spectro",
-                parent=self.window,
-                message_type=Gtk.MessageType.ERROR,
-                buttons=Gtk.ButtonsType.CLOSE,
-                text="Spectro not respond ! The shots will not include spectro data",
-                modal=True)
-            response = dialog.run()
-            if response == Gtk.ResponseType.CLOSE:
-                dialog.destroy()
-            return
+        # if (self.spectro_status != 'OK' ):
+        #     dialog = Gtk.MessageDialog(
+        #         title="Error spectro",
+        #         parent=self.window,
+        #         message_type=Gtk.MessageType.ERROR,
+        #         buttons=Gtk.ButtonsType.CLOSE,
+        #         text="Spectro not respond ! The shots will not include spectro data",
+        #         modal=True)
+        #     response = dialog.run()
+        #     if response == Gtk.ResponseType.CLOSE:
+        #         dialog.destroy()
+        #     return
 
         steps =      200 / nb_shots_int
         for i in range (nb_shots_int):
             self.start_image_captur(None)
 
-            if self.spectro_status == 'OK':
-                self.spectro_capture(None)
+            # if self.spectro_status == 'OK':
+            #     self.spectro_capture(None)
+
             time.sleep(0.1)
             self.save_current_image(None)
             self.refresh_all_components()
@@ -881,6 +882,8 @@ class GUI:
         rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(color_raw, depth_raw , convert_rgb_to_intensity=False )
         # todo: load from saved intersec
         camera_intrinsic = o3d.camera.PinholeCameraIntrinsic(o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault)
+
+
         pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, camera_intrinsic)
         pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
         o3d.io.write_point_cloud("out.ply", pcd)

@@ -160,7 +160,7 @@ class ImageManager:
                 color_image,
             )
 
-            color_image = color_image[..., ::-1]
+
         finally:
             self.pipeline.stop()
         self.image_rgb = color_image

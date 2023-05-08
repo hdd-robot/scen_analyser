@@ -28,7 +28,12 @@ if __name__ == "__main__":
     # plt.imshow(rgbd_image.depth)
     # plt.show()
 
-    pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, camera_intrinsic)
+    camera_extrinsec = np.array(0.999961, 0.00184501, -0.00861185, -0.00187475, 0.999992, -0.00344586, 0.00860543, 0.00346188, 0.999957)
+    camera_extrinsec.reshape(3, 3)
+
+    pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, camera_intrinsic, camera_extrinsec)
+
+
 
     # print(np.asarray(pcd.points))
     # print("\n")
